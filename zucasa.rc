@@ -1,0 +1,17 @@
+# Zucasa configuration file
+# Comments are ignored
+
+# Where to look for photos (*.jpg, *.png, *.gif)
+basedir=/home/jonole/Pictures/zucasa-test/Lise
+username=Lise
+
+basedir=/home/jonole/Pictures/zucasa-test/Jon\ Ole
+username=Jon Ole
+
+basedir=/media/hugin/photos
+
+# Output directory -- WILL BE EMPTIED FOR EACH RELOAD
+output=/home/jonole/tempcasa
+
+# Thumbnails size (max height)
+size=80
