@@ -11,6 +11,9 @@ CONFIG_FILE="zucasa.rc"
 # Name of log file
 LOG_FILE="zucasa.log"
 
+# Name of metadata file
+METADATA_FILE="metadata.txt"
+
 # Where to keep temporary files (directory is wiped between each run)
 OUTPUT=""
 
@@ -73,8 +76,7 @@ read_config_file() {
 	exec 0<&10 10<&-
 
 	# Run through all lines and collect config values
-	for line in "${lines[@]}"
-	do
+	for line in "${lines[@]}"; do
 	    if [[ ${line:0:1} != "#" && ${line:0:1} != "" ]]; then
 		IFS="=" read -r setting value <<< $line
 		tuples="$tuples$setting,$value;"
@@ -93,8 +95,7 @@ load_config_file() {
     local dirs=""
     local last_dir=""
     IFS=";" read -a items <<< $config
-    for item in "${items[@]}"
-    do
+    for item in "${items[@]}"; do
 	IFS="," read setting value <<< $item
 	
 	if [[ $last_dir != "" ]]; then
@@ -102,7 +103,7 @@ load_config_file() {
 	    if [[ $setting == "username" ]]; then
 		dirs="$dirs$value,$last_dir;"
 	    else
-		dirs="$dirs*,$last_dir;"
+		dirs="$dirs[none],$last_dir;"
 	    fi
 	    last_dir=""
 	fi
@@ -131,8 +132,18 @@ load_config_file() {
     INPUTS=$dirs
 }
 
-# Loop all files in basedir $1, create thumbnail and extract metainfo as needed
-
+# Loop all files in directory, create thumbnail and extract metainfo as needed
+# $1 username
+# $2 directory
+import_dir() {
+    echo "Import all photos ($1) ${@: 2}"
+    for file in $(find "${@: 2}" -name "*.jpg" -or -name "*.png"); do
+	local create_date=$(exiftool $file -CreateDate)
+	if [[ $create_date == "" ]]; then
+	    log_info "Could not get create date from $file"
+	fi
+    done
+}
 
 # Get metainfo for $1 saved on path $2
 extract_metainfo() {
@@ -153,8 +164,13 @@ main() {
     init_log_file
     check_dependencies
     load_config_file $CONFIG_FILE
-    echo $INPUTS
-    log_info "Ready"
+
+    # Split inputs and import each directory in order
+    IFS=";" read -a items <<< $INPUTS
+    for item in "${items[@]}"; do
+	IFS="," read username input <<< $item
+	import_dir "$username" "$input"
+    done
 }
 
 main "$@"
