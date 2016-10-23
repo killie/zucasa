@@ -3,12 +3,11 @@
 
 # Where to look for photos (*.jpg, *.png, *.gif)
 basedir=/home/jonole/Pictures/zucasa-test/Lise
-username=Lise
+# Optional username (lower case, single word). Removing line means previous basedir is for all users.
+username=lise
 
-basedir=/home/jonole/Pictures/zucasa-test/Jon\ Ole
-username=Jon Ole
-
-basedir=/media/hugin/photos
+#basedir=/home/jonole/Pictures/zucasa-test/Jon\ Ole
+#username=jonole
 
 # Output directory -- WILL BE EMPTIED FOR EACH RELOAD
 output=/home/jonole/tempcasa
