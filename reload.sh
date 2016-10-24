@@ -11,9 +11,6 @@ CONFIG_FILE="zucasa.rc"
 # Name of log file
 LOG_FILE="zucasa.log"
 
-# Name of metadata file
-METADATA_FILE="metadata.txt"
-
 # Where to keep temporary files (directory is wiped between each run)
 OUTPUT=""
 
