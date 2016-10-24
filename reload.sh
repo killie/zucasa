@@ -56,6 +56,10 @@ check_dependencies() {
         log_err "Cannot find dependency 'exiftool'. Aborting."
 	exit 31
     }
+    command -v convert >/dev/null 2>&1 || {
+	log_err "Cannot find dependency 'imagemagick'. Aborting."
+	exit 32
+    }
     return $retval
 }
 
@@ -141,13 +145,16 @@ load_config_file() {
 # $1 username
 # $2 directory
 import_dir() {
-    echo "Import all photos ($1) ${@: 2}"
+    log_info "Importing all photos in ${@: 2} (user: $1)..."
+    declare -i imported=0
+    declare -i skipped=0
     for file in $(find "${@: 2}" -name "*.jpg" -or -name "*.png"); do
 	local create_date=$(exiftool $file -CreateDate)
 	local user=$1
 	if [[ $create_date == "" ]]; then
 	    # Could not get create date from EXIF metadata -- TODO: Try filename
-	    log_warn "Could not get create date from $file"
+	    log_warn "Could not get create date from $file. Skipping."
+	    skipped=$((skipped + 1))
 	else
 	    # Split into date parts and create directory
 	    local year=${create_date:34:4}
@@ -161,24 +168,35 @@ import_dir() {
 	    mkdir -p "$OUTPUT/$user/$year/$month"
 	    mkdir -p "$OUTPUT/$user/$year/$month/$day"
 
-	    # Now find a logical filename, create thumbnail and extract metainfo
+	    # Find logical filename by counting all files in directory excluding text files
+	    local path="$OUTPUT/$user/$year/$month/$day"
+	    local filename=$(create_filename $path)
+
+	    # Create thumbnail and extract metainfo to text file
+	    create_thumbnail "$file" "$path" "$filename.jpg"
+	    create_metainfo "$file" "$path" "$filename.txt"
+	    imported=$((imported + 1))
 	fi
     done
+    log_info "Imported $imported, skipped $skipped."
 }
 
-# Get metainfo for $1 saved on path $2
-extract_metainfo() {
-    local -i retval=0
-
-    return $retval
+# Count number of files in directory and increase by one, ignoring text files. Return number without extension.
+create_filename() {
+    local count=$(ls $1 -p | grep -v '\.txt' | wc -l)
+    count=$((count + 1))
+    echo $count
 }
 
-# Create thumbnail for $1 with size $2 on path $3
-# Creates directory if necessary
+# Create thumbnail for $1 and put file in $2 with filename $3
 create_thumbnail() {
-    local -i retval=0
+    # TODO: Should rotate before creating thumbnail
+    convert -thumbnail x$SIZE $1 $2/$3
+}
 
-    return $retval
+# Get metainfo for $1 saved on path $2 with filename $3
+create_metainfo() {
+    exiftool $1 > $2/$3
 }
 
 main() {
