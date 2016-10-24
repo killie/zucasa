@@ -31,12 +31,17 @@ init_log_file() {
 
 # Append info $1 to log file
 log_info() {
-    add_to_log "II" $1
+    add_to_log "II" "$@"
+}
+
+# Append warning $1 to log file
+log_warn() {
+    add_to_log "WW" "$@"
 }
 
 # Append error $1 to log file
 log_err() {
-    add_to_log "EE" $1
+    add_to_log "EE" "$@"
 }
 
 add_to_log() {
@@ -139,8 +144,24 @@ import_dir() {
     echo "Import all photos ($1) ${@: 2}"
     for file in $(find "${@: 2}" -name "*.jpg" -or -name "*.png"); do
 	local create_date=$(exiftool $file -CreateDate)
+	local user=$1
 	if [[ $create_date == "" ]]; then
-	    log_info "Could not get create date from $file"
+	    # Could not get create date from EXIF metadata -- TODO: Try filename
+	    log_warn "Could not get create date from $file"
+	else
+	    # Split into date parts and create directory
+	    local year=${create_date:34:4}
+	    local month=${create_date:39:2}
+	    local day=${create_date:42:2}
+
+	    # If user is [none] create public directory, followed by year/month/day
+	    if [[ $user == "[none]" ]]; then user="public"; fi
+	    mkdir -p "$OUTPUT/$user"
+	    mkdir -p "$OUTPUT/$user/$year"
+	    mkdir -p "$OUTPUT/$user/$year/$month"
+	    mkdir -p "$OUTPUT/$user/$year/$month/$day"
+
+	    # Now find a logical filename, create thumbnail and extract metainfo
 	fi
     done
 }
@@ -164,6 +185,9 @@ main() {
     init_log_file
     check_dependencies
     load_config_file $CONFIG_FILE
+    
+    # Empty output directory
+    rm -R $OUTPUT/*
 
     # Split inputs and import each directory in order
     IFS=";" read -a items <<< $INPUTS
