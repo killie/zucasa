@@ -2,38 +2,41 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="static/sidebar.css">
+    <link rel="stylesheet" href="static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/zucasa.css">
     <title>Zucasa</title>
   </head>
-  <body>
-    <div id="wrapper" class="container">
-
-      <!-- Sidebar -->
-      <div id="sidebar-wrapper">
-	<ul class="sidebar-nav">
-	  <li><a href="#">2016</a></li>
-	  <li><a href="#">2015</a></li>
-	  <li><a href="#">2014</a></li>
-	  <li><a href="#">2013</a></li>
-	</ul>
-      </div>
-
-      <!-- Page content -->
-      <div id="page-content-wrapper">
-	<div class="container-fluid">
-	  <div class="row">
-	    <div class="col-lg-12">
-	      <h1>Zucasa</h1>
-	      <p>Here comes the photos.</p>
-	    </div>
-	  </div>
-	</div>
-      </div>
-
+  <body id="main">
+    <nav class="sidebar">
+      <ul>
+	<li class="expanded">
+	  <a href="#">2016</a>
+	  <ul>
+	    <li class="collapsed"><a href="#">January</a></li>
+	    <li class="collapsed"><a href="#">March</a></li>
+	    <li class="collapsed"><a href="#">November</a></li>
+	    <li class="collapsed"><a href="#">December</a></li>
+	  </ul>
+	</li>
+	<li class="collapsed">
+	  <a href="#">2015</a>
+	  <ul>
+	    <li><a href="#">January</a></li>
+	  </ul>
+	</li>
+	<li class="collapsed">
+	  <a href="#">2014</a>
+	</li>
+	<li class="collapsed">
+	  <a href="#">2013</a>
+	</li>
+      </ul>
+    </nav>
+    <div class="page-content">
+      <section>
+	<div class="date-separator">7. October 2016</div>
+	<div>img img img</div>
+      </section>
     </div>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </body>
 </html>
