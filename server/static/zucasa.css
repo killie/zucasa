@@ -1,0 +1,48 @@
+
+#main {
+    display: flex;
+}
+
+.sidebar {
+    width: 260px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul ul {
+    margin-top: 0.3em;
+    padding-bottom: 0.2em;
+}
+
+.sidebar li {
+    padding-left: 1em;
+    margin-bottom: 0.3em;
+}
+
+.sidebar li.expanded:before {
+    content: "\f107";
+    font-family: FontAwesome;
+    display: inline-block;
+    margin-left: -1em;
+    width: 1em;
+}
+
+.sidebar li.expanded ul {
+    display: list-item;
+}
+
+.sidebar li.collapsed:before {
+    content: "\f105";
+    font-family: FontAwesome;
+    display: inline-block;
+    margin-left: -1em;
+    width: 1em;
+}
+
+.sidebar li.collapsed ul {
+    display: none;
+}
