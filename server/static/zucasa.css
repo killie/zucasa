@@ -4,7 +4,7 @@
 }
 
 .sidebar {
-    width: 260px;
+    width: 200px;
 }
 
 .sidebar ul {
@@ -45,4 +45,14 @@
 
 .sidebar li.collapsed ul {
     display: none;
+}
+
+#main .page-content section {
+    padding-bottom: 1.5em;
+}
+
+.date-separator {
+    font-size: small;
+    color: gray;
+    padding-bottom: 0.5em;
 }

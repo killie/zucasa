@@ -9,34 +9,41 @@
   <body id="main">
     <nav class="sidebar">
       <ul>
+      {% for year in years.keys() %}
 	<li class="expanded">
-	  <a href="#">2016</a>
+	  <a href="#">{{ year }}</a>
 	  <ul>
-	    <li class="collapsed"><a href="#">January</a></li>
-	    <li class="collapsed"><a href="#">March</a></li>
-	    <li class="collapsed"><a href="#">November</a></li>
-	    <li class="collapsed"><a href="#">December</a></li>
-	  </ul>
+	  {% for month in years[year].keys() %}
+	    <li class="collapsed">
+	      <a href="#">{{ month }}</a>
+	      <ul>
+	      {% for day in years[year][month].keys() %}
+	        <li class="collapsed">
+		  <a href="#">{{ day }}</a>
+		</li>
+              {% endfor %}
+	      </ul>
+	    </li>
+	  {% endfor %}
+          </ul>  
 	</li>
-	<li class="collapsed">
-	  <a href="#">2015</a>
-	  <ul>
-	    <li><a href="#">January</a></li>
-	  </ul>
-	</li>
-	<li class="collapsed">
-	  <a href="#">2014</a>
-	</li>
-	<li class="collapsed">
-	  <a href="#">2013</a>
-	</li>
+      {% endfor %}
       </ul>
     </nav>
     <div class="page-content">
+    {% for year in years.keys() %}
+      {% for month in years[year].keys() %}
+        {% for day in years[year][month].keys() %}
       <section>
-	<div class="date-separator">7. October 2016</div>
-	<div>img img img</div>
+	<div class="date-separator">{{ day }} {{ month }} {{ year }}</div>
+	{% for photo in years[year][month][day] %}
+	  <img src="static/import/{{ user }}/{{ year }}/{{ month}}/{{ day }}/{{ photo }}">
+        {% endfor %}
       </section>
+        {% endfor %}
+      {% endfor %}
+    {% endfor %}
     </div>
+    <script type="text/javascript" src="static/main.js"></script>
   </body>
 </html>

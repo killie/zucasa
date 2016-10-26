@@ -12,6 +12,7 @@ def getRootFromConfig(file):
 def getFileList(root):
     """Load all known files into array reverse sorted on date.
     First level is user, second is year, month, day, photo."""
+
     users = {"public": {}}
     for user in os.walk(root).next()[1]:
         users[user] = {}
@@ -32,13 +33,18 @@ def getFileList(root):
     return users
 
 app = Flask(__name__)
+root = os.getcwd() + "/server/static/import"
+files = getFileList(root)
 
 @app.route("/")
 def main():
-    return render_template("index.html")
+    return render_template("index.html", years=files["public"])
+
+@app.route("/<user>")
+def user(user):
+    return render_template("index.html", years=files[user], user=user)
 
 if __name__ == "__main__":
-    files = getFileList(getRootFromConfig("zucasa.rc"))
     print files
     app.run()
 
