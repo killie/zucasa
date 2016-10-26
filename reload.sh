@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script is executed on a dump directory to create thumbnails and extract metainfo into files
-# For each run it removes temp directory and recreates thumbnails and metainfo files
+# Script is executed on one or more directories to create thumbnails and extract metainfo into files
+# For each run it removes temp directory (below server/static) and recreates thumbnails and metainfo files
 
 # Server reads temp directory into memory and serves web pages with thumnails and links to originals
 
@@ -11,8 +11,8 @@ CONFIG_FILE="zucasa.rc"
 # Name of log file
 LOG_FILE="zucasa.log"
 
-# Where to keep temporary files (directory is wiped between each run)
-OUTPUT=""
+# Temporary files are kept in server/static/import (directory is wiped between each run)
+OUTPUT="server/static/import"
 
 # Size (height) of each thumbnail
 SIZE=75
@@ -93,7 +93,7 @@ read_config_file() {
     # TODO: How to handle error? Send to errout? Don't forget to log
 }
 
-# Load config file checking if directory exists and write permissions
+# Load config file into globals
 # $1 name of config file
 # Returns 0 if OK, else an error code
 load_config_file() {
@@ -118,22 +118,9 @@ load_config_file() {
 	if [[ $setting == "basedir" ]]; then last_dir=$value; fi
 
 	# Read other values directly into globals
-	if [[ $setting == "output" ]]; then OUTPUT=$value; fi
 	if [[ $setting == "size" ]]; then SIZE=$value; fi
 
     done
-
-    # Check if output directory exists
-    if [[ ! -d $OUTPUT ]]; then
-	log_err "Cannot find output directory $OUTPUT"
-	return 23
-    fi
-
-    # Check if user running script has write permissions
-    if [[ ! -w $OUTPUT ]]; then
-	log_err "Cannot write to directory $OUTPUT"
-	return 24
-    fi
 
     INPUTS=$dirs
 }
@@ -202,7 +189,10 @@ main() {
     load_config_file $CONFIG_FILE
     
     # Empty output directory
+    mkdir -p $OUTPUT
     rm -R $OUTPUT/*
+
+    echo "Grab local IP and use it as host for Flask app"
 
     # Split inputs and import each directory in order
     IFS=";" read -a items <<< $INPUTS
