@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Script is executed on one or more directories to create thumbnails and extract metainfo into files
-# For each run it removes temp directory (below server/static) and recreates thumbnails and metainfo files
+# Script is executed on one or more directories to create thumbnails and extract metainfo into files.
+# For each run it removes temp directory (below server/static) and recreates thumbnails and metainfo.
 
-# Server reads temp directory into memory and serves web pages with thumnails and links to originals
+# Server reads temp directory into memory and serves web pages with thumnails and links to original images.
 
 # Name and location of config file
 CONFIG_FILE="zucasa.rc"
@@ -11,7 +11,7 @@ CONFIG_FILE="zucasa.rc"
 # Name of log file
 LOG_FILE="zucasa.log"
 
-# Temporary files are kept in server/static/import (directory is wiped between each run)
+# Thumbnails and metainfo files are kept in server/static/import (directory is wiped between each run)
 OUTPUT="server/static/import"
 
 # Size (height) of each thumbnail
@@ -119,10 +119,18 @@ load_config_file() {
 
 	# Read other values directly into globals
 	if [[ $setting == "size" ]]; then SIZE=$value; fi
-
     done
 
     INPUTS=$dirs
+}
+
+# Checks if $1 file is a photo (by checking file extension)
+file_is_photo() {
+    if [[ $1 == *.jpg || $1 == *.JPG || $1 == *.png || $1 == *.PNG ]]; then
+	echo true
+    else
+	echo false
+    fi
 }
 
 # Loop all files in directory, create thumbnail and extract metainfo as needed
@@ -130,15 +138,19 @@ load_config_file() {
 # $2 directory
 import_dir() {
     log_info "Importing all photos in ${@: 2} (user: $1)..."
+    local user=$1
     declare -i imported=0
     declare -i skipped=0
-    for file in $(find "${@: 2}" -name "*.jpg" -or -name "*.png"); do
-	local create_date=$(exiftool $file -CreateDate)
-	local user=$1
+    # Find all files below directory
+    while read -d $'\0' file; do
+	local is_photo=$(file_is_photo "$file")
+	if [[ $is_photo == false ]]; then continue; fi
+
+	local create_date=$(exiftool "$file" -CreateDate)
 	if [[ $create_date == "" ]]; then
 	    # Could not get create date from EXIF metadata -- TODO: Try filename
 	    log_warn "Could not get create date from $file. Skipping."
-	    skipped=$((skipped + 1))
+	    let skipped++
 	else
 	    # Split into date parts and create directory
 	    local year=${create_date:34:4}
@@ -159,9 +171,9 @@ import_dir() {
 	    # Create thumbnail and extract metainfo to text file
 	    create_thumbnail "$file" "$path" "$filename.jpg"
 	    create_metainfo "$file" "$path" "$filename.txt"
-	    imported=$((imported + 1))
+	    let imported++
 	fi
-    done
+    done < <(find "${@: 2}" -print0)
     log_info "Imported $imported, skipped $skipped."
 }
 
@@ -175,12 +187,12 @@ create_filename() {
 # Create thumbnail for $1 and put file in $2 with filename $3
 create_thumbnail() {
     # TODO: Should rotate before creating thumbnail
-    convert -thumbnail x$SIZE $1 $2/$3
+    convert -thumbnail x$SIZE "$1" "$2"/$3
 }
 
 # Get metainfo for $1 saved on path $2 with filename $3
 create_metainfo() {
-    exiftool $1 > $2/$3
+    exiftool "$1" > "$2"/$3
 }
 
 main() {
