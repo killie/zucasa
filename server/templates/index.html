@@ -35,7 +35,7 @@
       {% for month in years[year].keys() %}
         {% for day in years[year][month].keys() %}
       <section>
-	<div class="date-separator">{{ day }} {{ month }} {{ year }}</div>
+	<div class="date-separator">{{ picture_date(year, month, day) }}</div>
 	{% for photo in years[year][month][day] %}
 	  <img src="static/import/{{ user }}/{{ year }}/{{ month}}/{{ day }}/{{ photo }}">
         {% endfor %}

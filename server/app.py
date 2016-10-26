@@ -1,15 +1,8 @@
 from flask import Flask, render_template
 import os
+import calendar
 
-def getRootFromConfig(file):
-    """Opening config file to find value of output setting."""
-    f = open(file)
-    for line in f:
-        if (line.startswith("output=")):
-            return line[7:].strip()
-    return ""
-
-def getFileList(root):
+def get_file_list(root):
     """Load all known files into array reverse sorted on date.
     First level is user, second is year, month, day, photo."""
 
@@ -34,7 +27,7 @@ def getFileList(root):
 
 app = Flask(__name__)
 root = os.getcwd() + "/server/static/import"
-files = getFileList(root)
+files = get_file_list(root)
 
 @app.route("/")
 def main():
@@ -44,10 +37,14 @@ def main():
 def user(user):
     return render_template("index.html", years=files[user], user=user)
 
-def getIP(file):
+def get_ip(file):
     f = open(file)
     return f.readline()
 
+def get_picture_date(year, month, day):
+    return str(int(day)) + ". " + calendar.month_name[int(month)] + " " + year
+
 if __name__ == "__main__":
     print files
-    app.run(getIP("local_ip.txt").rstrip())
+    app.jinja_env.globals.update(picture_date=get_picture_date)
+    app.run(get_ip("local_ip.txt").rstrip())
