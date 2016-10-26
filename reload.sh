@@ -195,6 +195,13 @@ create_metainfo() {
     exiftool "$1" > "$2"/$3
 }
 
+# Get local IP and write it to local_ip.txt file, so Flask knows where to host itself
+get_local_ip() {
+    local local_ip=$(grep -Po 'src \K.*(?= cache)' <<< $(ip route get 1))
+    echo $local_ip > local_ip.txt
+    log_info "Local IP $local_ip written to: local_ip.txt (for hosting web server)"
+}
+
 main() {
     init_log_file
     check_dependencies
@@ -204,14 +211,14 @@ main() {
     mkdir -p $OUTPUT
     rm -R $OUTPUT/*
 
-    echo "Grab local IP and use it as host for Flask app"
-
     # Split inputs and import each directory in order
     IFS=";" read -a items <<< $INPUTS
     for item in "${items[@]}"; do
 	IFS="," read username input <<< $item
 	import_dir "$username" "$input"
     done
+
+    get_local_ip
 }
 
 main "$@"

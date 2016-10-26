@@ -44,9 +44,10 @@ def main():
 def user(user):
     return render_template("index.html", years=files[user], user=user)
 
+def getIP(file):
+    f = open(file)
+    return f.readline()
+
 if __name__ == "__main__":
     print files
-    app.run()
-
-
-
+    app.run(getIP("local_ip.txt").rstrip())
