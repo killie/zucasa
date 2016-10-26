@@ -9,8 +9,5 @@ username=lise
 #basedir=/home/jonole/Pictures/zucasa-test/Jon\ Ole
 #username=jonole
 
-# Output directory -- WILL BE EMPTIED FOR EACH RELOAD
-output=/home/jonole/tempcasa
-
 # Thumbnails size (max height)
-size=80
+size=100
