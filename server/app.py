@@ -44,7 +44,11 @@ def get_ip(file):
 def get_picture_date(year, month, day):
     return str(int(day)) + ". " + calendar.month_name[int(month)] + " " + year
 
+def get_month_name(month):
+    return calendar.month_name[int(month)]
+
 if __name__ == "__main__":
     print files
     app.jinja_env.globals.update(picture_date=get_picture_date)
+    app.jinja_env.globals.update(month_name=get_month_name)
     app.run(get_ip("local_ip.txt").rstrip())

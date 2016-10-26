@@ -15,7 +15,7 @@
 	  <ul>
 	  {% for month in years[year].keys() %}
 	    <li class="collapsed">
-	      <a href="#">{{ month }}</a>
+	      <a href="#">{{ month_name(month) }}</a>
 	      <ul>
 	      {% for day in years[year][month].keys() %}
 	        <li class="collapsed">
@@ -44,6 +44,7 @@
       {% endfor %}
     {% endfor %}
     </div>
+    <script type="text/javascript" src="static/zepto.min.js"></script>
     <script type="text/javascript" src="static/main.js"></script>
   </body>
 </html>

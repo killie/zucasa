@@ -1,7 +1,11 @@
 
+/* Main page */
+
 #main {
     display: flex;
 }
+
+/* Sidebar */
 
 .sidebar {
     width: 200px;
@@ -47,6 +51,8 @@
     display: none;
 }
 
+/* Page content (thumbnails) */
+
 #main .page-content section {
     padding-bottom: 1.5em;
 }
@@ -55,4 +61,13 @@
     font-size: small;
     color: gray;
     padding-bottom: 0.5em;
+}
+
+#main .page-content img {
+    border: 4px transparent solid;
+}
+
+#main .page-content img:hover {
+    border: 4px lightgray solid;
+    cursor: pointer;
 }
