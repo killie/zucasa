@@ -16,6 +16,6 @@ Runs on GNU/Linux using Bash, Python, Flask, ExifTool and ImageMagick.
 2. Run reload.sh to create thumbnails and extract metainfo (temporary files are kept in server/static/import)
 3. Run server.sh to start web server
 
-See output from server script to where your gallery is hosted.
+See output from server script to find where your gallery is hosted.
 
-If you're using user names for your photos then append username to URL, for instance http://192.168.123.123:5000/bob
+If you're using usernames for your photos then append username to URL, for instance http://192.168.123.123:5000/bob
