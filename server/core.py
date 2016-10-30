@@ -26,7 +26,6 @@ def get_files_as_map(root):
                         
                         # Sort file numbers array
                         photos[user][year][month][day].sort()
-                        print photos[user][year][month][day]
 
     return photos
 
