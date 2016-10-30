@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/zucasa.css">
+    <title>Zucasa</title>
+  </head>
+  <body id="view">
+    <nav class="filmstrip">
+      <div class="back"><i class="fa fa-chevron-left"></i></div>
+      {% for thumbnail in thumbnails %}
+      <img class="thumbnail" src="{{ thumbnail }}">
+      {% endfor %}
+      <div class="forward"><i class="fa fa-chevron-right"></i></div>
+    </nav>
+    <div class="container">
+      <div class="photo" style="background-image: url('{{ photo }}');"/>
+    </div>
+    <script type="text/javascript" src="/static/zepto.min.js"></script>
+    <script type="text/javascript" src="/static/zucasa.js"></script>
+  </body>
+</html>

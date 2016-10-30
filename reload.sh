@@ -14,6 +14,9 @@ LOG_FILE="zucasa.log"
 # Thumbnails and metainfo files are kept in server/static/import (directory is wiped between each run)
 OUTPUT="server/static/import"
 
+# Cache originals here for a limited period of time
+CACHE="server/static/cache"
+
 # Size (height) of each thumbnail
 SIZE=75
 
@@ -198,6 +201,7 @@ create_metainfo() {
 # Get local IP and write it to local_ip.txt file, so Flask knows where to host itself
 get_local_ip() {
     local local_ip=$(grep -Po 'src \K.*(?= cache)' <<< $(ip route get 1))
+    # if RTNETLINK answers: Network is unreachable then use blank (localhost)
     echo $local_ip > local_ip.txt
     log_info "Local IP $local_ip written to: local_ip.txt (for hosting web server)"
 }
@@ -205,11 +209,16 @@ get_local_ip() {
 main() {
     init_log_file
     check_dependencies
+    get_local_ip
     load_config_file $CONFIG_FILE
-    
+
     # Empty output directory
     mkdir -p $OUTPUT
     rm -R $OUTPUT/*
+
+    # Empty cache directory
+    mkdir -p $CACHE
+    rm -R $CACHE/*
 
     # Split inputs and import each directory in order
     IFS=";" read -a items <<< $INPUTS
@@ -217,8 +226,6 @@ main() {
 	IFS="," read username input <<< $item
 	import_dir "$username" "$input"
     done
-
-    get_local_ip
 }
 
 main "$@"

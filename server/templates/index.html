@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="static/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="static/zucasa.css">
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/zucasa.css">
     <title>Zucasa</title>
   </head>
   <body id="main">
@@ -36,15 +36,15 @@
         {% for day in years[year][month].keys() %}
       <section>
 	<div class="date-separator">{{ picture_date(year, month, day) }}</div>
-	{% for photo in years[year][month][day] %}
-	  <img src="static/import/{{ user }}/{{ year }}/{{ month}}/{{ day }}/{{ photo }}">
+	{% for num in years[year][month][day] %}
+	  <img class="thumbnail" src="static/import/{{ user }}/{{ year }}/{{ month}}/{{ day }}/{{ num }}">
         {% endfor %}
       </section>
         {% endfor %}
       {% endfor %}
     {% endfor %}
     </div>
-    <script type="text/javascript" src="static/zepto.min.js"></script>
-    <script type="text/javascript" src="static/main.js"></script>
+    <script type="text/javascript" src="/static/zepto.min.js"></script>
+    <script type="text/javascript" src="/static/zucasa.js"></script>
   </body>
 </html>

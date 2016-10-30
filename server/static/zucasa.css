@@ -51,7 +51,7 @@
     display: none;
 }
 
-/* Page content (thumbnails) */
+/* Page content */
 
 #main .page-content section {
     padding-bottom: 1.5em;
@@ -63,11 +63,57 @@
     padding-bottom: 0.5em;
 }
 
-#main .page-content img {
+/* Thumbnails */
+
+img.thumbnail {
     border: 4px transparent solid;
 }
 
-#main .page-content img:hover {
+img.thumbnail:hover {
     border: 4px lightgray solid;
     cursor: pointer;
 }
+
+/* View page */
+
+#view {
+    margin: 0;
+    background-color: #444;
+}
+
+/* Filmstrip */
+
+#view nav {
+    display: flex;
+    height: 100px;
+    padding: 20px;
+    background-color: white;
+}
+
+#view nav div {
+    display: inline-block;
+    padding-top: 25%;
+    padding-bottom: 25%;
+    margin-top: 5px;
+    font-size: 36px;
+    line-height: 50px;
+    background-color: black;
+    color: white;
+    width: 50px;
+    height: 50%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#view .container {
+    margin: 5px;
+}
+
+#view .photo {
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: calc(100vw - 10px);
+    height: calc(100vh - 150px);
+}
+
