@@ -16,5 +16,4 @@ $("div.zoom").click(function (e) {
     var src = $(e.target.parentElement).css("background-image");
     src = src.replace('url("', '').replace('")', '');
     window.location.href = src;
-
 });
