@@ -78,10 +78,10 @@ class Photo:
         self.original_src = "" # Must call load_photo before use
 
     def load_photo(self):
-        self.meta_info = self.get_meta_info()
-        self.original_src = self.copy_to_cache(self.meta_info["Directory"], self.meta_info["File Name"])
+        self.meta_info = self._get_meta_info()
+        self.original_src = self._copy_to_cache(self.meta_info["Directory"], self.meta_info["File Name"])
 
-    def get_meta_info(self):
+    def _get_meta_info(self):
         """Get metainfo from text file matching name of thumbnail split into map."""
         meta_info = {}
         f = open(self.meta_info_file)
@@ -90,7 +90,7 @@ class Photo:
             meta_info[line[:index].rstrip()] = line[index + 2:].rstrip()
         return meta_info
 
-    def copy_to_cache(self, directory, file_name):
+    def _copy_to_cache(self, directory, file_name):
         """Copy original photo into cache and return its filename, relative to working directory."""
         extension = file_name[-4:]
         self.cache_file += extension
@@ -101,6 +101,3 @@ class Photo:
         """Return reference to thumbnail file for this photo."""
         return "/static/import/" + self.user + "/" + self.year + "/" + self.month + "/" + self.day + \
             "/" + str(self.num) + "." + self.ext
-
-
-
