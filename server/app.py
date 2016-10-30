@@ -33,7 +33,6 @@ def view(user, year, month, day, num):
     thumbnails = []
     i = 0
     for p in photos[user]:
-        print "Index " + str(i) + " len: " + str(len(photos[user]))
         if (p.date_taken == photo.date_taken):
             if (p.num == int(num)):
                 if (i > 2):
