@@ -97,8 +97,7 @@ img.thumbnail:hover {
     margin-top: 5px;
     font-size: 36px;
     line-height: 50px;
-    background-color: black;
-    color: white;
+    color: #444;
     width: 50px;
     height: 50%;
     text-align: center;
