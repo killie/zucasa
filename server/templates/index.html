@@ -9,17 +9,17 @@
   <body id="main">
     <nav class="sidebar">
       <ul>
-      {% for year in years.keys() %}
+      {% for year in sort_desc(years.keys()) %}
 	<li class="expanded">
-	  <a href="#">{{ year }}</a>
+	  <a href="#{{ year }}">{{ year }}</a>
 	  <ul>
-	  {% for month in years[year].keys() %}
+	  {% for month in sort_asc(years[year].keys()) %}
 	    <li class="collapsed">
-	      <a href="#">{{ month_name(month) }}</a>
+	      <a href="#{{ year }}{{ month }}">{{ month_name(month) }}</a>
 	      <ul>
-	      {% for day in years[year][month].keys() %}
+	      {% for day in sort_asc(years[year][month].keys()) %}
 	        <li class="collapsed">
-		  <a href="#">{{ day }}</a>
+		  <a href="#{{ year }}{{ month }}{{ day }}">{{ day }}</a>
 		</li>
               {% endfor %}
 	      </ul>
@@ -31,12 +31,12 @@
       </ul>
     </nav>
     <div class="page-content">
-    {% for year in years.keys() %}
-      {% for month in years[year].keys() %}
-        {% for day in years[year][month].keys() %}
-      <section>
+    {% for year in sort_desc(years.keys()) %}
+      {% for month in sort_asc(years[year].keys()) %}
+        {% for day in sort_asc(years[year][month].keys()) %}
+      <section id="{{ year }}{{ month }}{{ day }}">
 	<div class="date-separator">{{ picture_date(year, month, day) }}</div>
-	{% for num in years[year][month][day] %}
+	{% for num in sort_day(years[year][month][day]) %}
 	  <img class="thumbnail" src="static/import/{{ user }}/{{ year }}/{{ month}}/{{ day }}/{{ num }}">
         {% endfor %}
       </section>

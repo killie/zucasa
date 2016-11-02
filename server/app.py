@@ -35,6 +35,8 @@ def view(user, year, month, day, num):
     for p in photos[user]:
         if (p.date_taken == photo.date_taken):
             if (p.num == int(num)):
+                if (i > 3):
+                    thumbnails.append(photos[user][i - 3].get_thumbnail_src())
                 if (i > 2):
                     thumbnails.append(photos[user][i - 2].get_thumbnail_src())
                 if (i > 1):
@@ -44,6 +46,8 @@ def view(user, year, month, day, num):
                     thumbnails.append(photos[user][i + 1].get_thumbnail_src())
                 if (i + 2 < len(photos[user])):
                     thumbnails.append(photos[user][i + 2].get_thumbnail_src())
+                if (i + 3 < len(photos[user])):
+                    thumbnails.append(photos[user][i + 3].get_thumbnail_src())
         i += 1
 
     return render_template("view.html", photo=photo.original_src, thumbnails=thumbnails)
@@ -56,6 +60,27 @@ def get_picture_date(year, month, day):
 def get_month_name(month):
     return calendar.month_name[int(month)]
 
+def sort_asc(items):
+    return sorted(items)
+
+def sort_desc(items):
+    return sorted(items, reverse=True) 
+
+def pad_num(item):
+    """Finds out where last dot is, and prepends zeros so there are a fixed number of 
+    characters before last dot."""
+    n = item.rfind(".")
+    return ("0" * (5 - n)) + item
+
+def strip_num(item):
+    """Strips leading zeros from text."""
+    return item.lstrip("0")
+
+def sort_day(items):
+    padded = map(pad_num, items)
+    padded.sort()
+    return map(strip_num, padded)
+
 # Startup
 
 def get_ip(file):
@@ -66,6 +91,9 @@ if __name__ == "__main__":
     # Register template helpers
     app.jinja_env.globals.update(picture_date=get_picture_date)
     app.jinja_env.globals.update(month_name=get_month_name)
+    app.jinja_env.globals.update(sort_asc=sort_asc)
+    app.jinja_env.globals.update(sort_desc=sort_desc)
+    app.jinja_env.globals.update(sort_day=sort_day)
 
     # Start web server on local IP with default port number
     app.run(get_ip("local_ip.txt").rstrip())

@@ -176,7 +176,7 @@ import_dir() {
 	    create_metainfo "$file" "$path" "$filename.txt"
 	    let imported++
 	fi
-    done < <(find "${@: 2}" -print0)
+    done < <(find "${@: 2}" -print0 | sort -z)
     log_info "Imported $imported, skipped $skipped."
 }
 
