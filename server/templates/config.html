@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/zucasa.css">
+    <title>Zucasa</title>
+  </head>
+  <body id="config">
+    <form action="config" method="post">
+      <div>
+	<h1>Locations</h1>
+	<p>Where to load photos from disk.</p>
+	<div>
+	  {% for location in locations.keys() %}
+	  <div class="location">
+	    <input type="text" title="Absolute path on disk" name="location{{ loop.index }}" value="{{ location }}">
+	    <input type="text" title="Username. Use 'public' for shared photos." name="user{{ loop.index }}" value="{{ locations[location] }}">
+	    <input type="button" class="remove" value="Remove">
+	  </div>
+	  {% endfor %}
+	</div>
+	<input type="button" class="add" value="Add">
+      </div>
+      <div>
+	<h1>Thumbnail size</h1>
+	<p>Height of thumbnails.</p>
+	<input type="number" name="size" value="100">
+      </div>
+      <div>
+	<h1>Page size</h1>
+	<p>Number of months to display at a time.</p>
+	<input type="number" name="months" value="6">
+      </div>
+      <input type="submit" class="save" value="Save">
+    </form>
+    <script type="text/javascript" src="/static/zepto.min.js"></script>
+    <script type="text/javascript" src="/static/zucasa.js"></script>
+  </body>
+</html>

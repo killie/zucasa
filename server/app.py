@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sys
 from os import path, getcwd
 import calendar
@@ -6,18 +6,35 @@ import calendar
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from core import get_files_as_map, sort_photos_into_array, Photo
 
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+from foobar import load_locations, import_photos
+
 # Globals
 
 app = Flask(__name__)
 root = getcwd() + "/server/static/import"
-files = get_files_as_map(root)
-photos = sort_photos_into_array(files)
+progress = "Idle"
+
+# Map of locations -> user
+#locations = {"/media/loft/Camera/100___12": "jonole"}
+locations = load_locations()
+
+# Map file name -> photo
+#files = get_files_as_map(root)
+files = {}
+
+# Map of photos grouped by user, year, month, day
+#photos = sort_photos_into_array(files)
+photos = {}
 
 # Routes
 
 @app.route("/")
 def main():
-    return render_template("index.html", years=files["public"])
+    if (files):
+        return render_template("index.html", years=files["public"])
+    else:
+        return render_template("config.html", locations=locations)
 
 @app.route("/<user>")
 def user(user):
@@ -52,6 +69,20 @@ def view(user, year, month, day, num):
 
     return render_template("view.html", photo=photo.original_src, thumbnails=thumbnails)
 
+@app.route("/config", methods=["GET"])
+def get_config():
+    return render_template("config.html", locations=locations)
+
+@app.route("/config", methods=["POST"])
+def post_config():
+    print request.form
+    import_photos(locations, 100, files, photos, progress)
+    return render_template("progress.html", progress=progress)
+
+@app.route("/progress")
+def progress():
+    return render_template("progress.html", progress=progress)
+
 # Template helpers
 
 def get_picture_date(year, month, day):
@@ -83,10 +114,6 @@ def sort_day(items):
 
 # Startup
 
-def get_ip(file):
-    f = open(file)
-    return f.readline()
-
 if __name__ == "__main__":
     # Register template helpers
     app.jinja_env.globals.update(picture_date=get_picture_date)
@@ -96,4 +123,4 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(sort_day=sort_day)
 
     # Start web server on local IP with default port number
-    app.run(get_ip("local_ip.txt").rstrip())
+    app.run(sys.argv[1])
