@@ -2,6 +2,73 @@ import os
 from shutil import copyfile
 import datetime
 import operator
+import subprocess
+
+class Photo:
+    """Holds reference to a photo via user, year, month, day and number. 
+    Has methods to get metainfo and original image."""
+
+    def __init__(self, path, modified):
+        self.path = path
+        i = self.path.rfind(".")
+        self.ext = self.path[i:]
+        self.modified = modified
+        
+    def load_creation_and_rotation(self):
+        self.metainfo = self._load_metainfo(self.path)
+        if ("Create Date" in self.metainfo):
+            self.created = self.metainfo["Create Date"]
+        else:
+            print "Skipping " + self.path
+            self.created = False
+
+        if ("Orientation" in self.metainfo):
+            if (self.metainfo["Orientation"] == "Rotate 90 CW"):
+                self.rotate = 90
+            elif (self.metainfo["Orientation"] == "Rotate 270 CW"):
+                self.rotate = 270
+            else:
+                self.rotate = 0
+
+    def _load_metainfo(self, path):
+        """Get metainfo from text file matching name of thumbnail split into map."""
+        metainfo = {}
+        lines = subprocess.check_output(["exiftool", self.path])
+        for line in lines.split("\n"):
+            if line:
+                index = line.index(":")
+                metainfo[line[:index].rstrip()] = line[index + 2:].rstrip()
+        return metainfo
+
+    def is_valid(self):
+        if (self.created != False):
+            print self.path + " (" + self.created + ")"
+        return self.created
+
+def import_photos(config, files, photos, progress):
+    """Load photos from locations, creating thumbnails and extracting metainfo.
+
+    Start by extracting date and time photo was taken from meta info along with rotation.
+    When all locations have been read sort photos by creation date.
+    Save thumbnails with height equal size argument, and rotate as necessary."""
+
+    for location in config.locations.keys():
+        print "Importing " + location
+        user = config.locations[location]
+        if (not user in photos):
+            photos[user] = {}
+        if (not user in files):
+            files[user] = []
+        
+        for path, dirs, filenames in os.walk(location):
+            for filename in filenames:
+                modified = os.path.getmtime(path + "/" + filename)
+                photo = Photo(path + "/" + filename, modified)
+                photo.load_creation_and_rotation()
+                if photo.is_valid():
+                    files[user].append(photo)
+
+        print files[user]
 
 def get_files_as_map(root):
     """Load all known image files into map with user, year, month and day as keys,
@@ -50,54 +117,3 @@ def sort_photos_into_array(m):
 
     return photos
 
-class Photo:
-    """Holds reference to a photo via user, year, month, day and number. 
-    Has methods to get metainfo and original image."""
-
-    ext = "" # File extension
-
-    def __init__(self, user, year, month, day, num):
-        self.user = user
-        self.year = year
-        self.month = month
-        self.day = day
-        self.num = int(num)
-
-        # Create datetime object to sort photos
-        self.date_taken = datetime.date(int(year), int(month), int(day))
-
-        # Where to find meta info
-        self.meta_info_file = os.getcwd() + "/server/static/import/" + \
-            user + "/" + year + "/" + month + "/" + day + "/" + num + ".txt"
-
-        # Where to put original photo when copying to cache (without extension)
-        self.cache_file = os.getcwd() + "/server/static/cache/" + \
-            user + year + month + day + "-" + num
-
-        # Original source relative to working directory (cache_file with extension)
-        self.original_src = "" # Must call load_photo before use
-
-    def load_photo(self):
-        self.meta_info = self._get_meta_info()
-        self.original_src = self._copy_to_cache(self.meta_info["Directory"], self.meta_info["File Name"])
-
-    def _get_meta_info(self):
-        """Get metainfo from text file matching name of thumbnail split into map."""
-        meta_info = {}
-        f = open(self.meta_info_file)
-        for line in f:
-            index = line.index(":")
-            meta_info[line[:index].rstrip()] = line[index + 2:].rstrip()
-        return meta_info
-
-    def _copy_to_cache(self, directory, file_name):
-        """Copy original photo into cache and return its filename, relative to working directory."""
-        extension = file_name[-4:]
-        self.cache_file += extension
-        copyfile(directory + "/" + file_name, self.cache_file)
-        return self.cache_file[self.cache_file.index("/static/cache/"):]
-
-    def get_thumbnail_src(self):
-        """Return reference to thumbnail file for this photo."""
-        return "/static/import/" + self.user + "/" + self.year + "/" + self.month + "/" + self.day + \
-            "/" + str(self.num) + "." + self.ext

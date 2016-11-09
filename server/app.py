@@ -4,10 +4,11 @@ from os import path, getcwd
 import calendar
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from core import get_files_as_map, sort_photos_into_array, Photo
+from core import Photo, import_photos
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from config import Config, import_photos
+from config import Config
+
 
 # Globals
 
@@ -17,12 +18,11 @@ root = getcwd() + "/server/static/import"
 progress = "Idle"
 
 # Map file name -> photo
-#files = get_files_as_map(root)
 files = {}
 
 # Map of photos grouped by user, year, month, day
-#photos = sort_photos_into_array(files)
 photos = {}
+
 
 # Routes
 
@@ -81,12 +81,13 @@ def get_config():
 def post_config():
     config = Config()
     config.save(request.form, rc_file)
-    #import_photos(locations, 100, files, photos, progress)
+    import_photos(config, files, photos, progress)
     return render_template("progress.html", progress=progress)
 
 @app.route("/progress")
 def progress():
     return render_template("progress.html", progress=progress)
+
 
 # Template helpers
 
@@ -117,6 +118,7 @@ def sort_day(items):
     padded.sort()
     return map(strip_num, padded)
 
+
 # Startup
 
 if __name__ == "__main__":
@@ -129,3 +131,4 @@ if __name__ == "__main__":
 
     # Start web server on local IP with default port number
     app.run(sys.argv[1])
+
