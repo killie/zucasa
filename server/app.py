@@ -7,7 +7,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from core import get_files_as_map, sort_photos_into_array, Photo
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from foobar import load_locations, load_size, load_months, import_photos
+from config import Config, import_photos
 
 # Globals
 
@@ -15,9 +15,6 @@ rc_file = getcwd() + "/zucasa.rc"
 app = Flask(__name__)
 root = getcwd() + "/server/static/import"
 progress = "Idle"
-
-# Map of locations -> user
-locations = load_locations(rc_file)
 
 # Map file name -> photo
 #files = get_files_as_map(root)
@@ -34,11 +31,16 @@ def main():
     if (files):
         return render_template("index.html", years=files["public"])
     else:
-        return render_template("config.html", locations=locations, size=load_size(rc_file), months=load_months(rc_file))
+        config = Config()
+        config.load(rc_file)
+        return render_template("config.html", config=config)
 
 @app.route("/<user>")
 def user(user):
-    return render_template("index.html", years=files[user], user=user)
+    if (user in photos):
+        return render_template("index.html", years=files[user], user=user)
+    else:
+        return "Unknown user '" + user + "'. Try with '/'."
 
 @app.route("/<user>/<year>/<month>/<day>/<num>")
 def view(user, year, month, day, num):
@@ -71,12 +73,15 @@ def view(user, year, month, day, num):
 
 @app.route("/config", methods=["GET"])
 def get_config():
-    return render_template("config.html", locations=locations, size=load_size(rc_file), months=load_months(rc_file))
+    config = Config()
+    config.load(rc_file)
+    return render_template("config.html", config=config)
 
 @app.route("/config", methods=["POST"])
 def post_config():
-    print request.form
-    import_photos(locations, 100, files, photos, progress)
+    config = Config()
+    config.save(request.form, rc_file)
+    #import_photos(locations, 100, files, photos, progress)
     return render_template("progress.html", progress=progress)
 
 @app.route("/progress")

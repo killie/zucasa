@@ -54,7 +54,7 @@ class Photo:
     """Holds reference to a photo via user, year, month, day and number. 
     Has methods to get metainfo and original image."""
 
-    ext="" # File extension
+    ext = "" # File extension
 
     def __init__(self, user, year, month, day, num):
         self.user = user

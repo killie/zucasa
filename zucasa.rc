@@ -1,19 +1,18 @@
-# Zucasa configuration file
+# Zucasa configuration file.
 # Comments are ignored. Allowed keys are: location, user, size, months.
+# File will be replaced when using /config from web interface.
 
-# Where to look for photos (*.jpg, *.png, *.gif)
+# Add location + user pairs for each photo folder to import (recursively).
+# If user is not set then 'public' will be used (photo are for all users).
+# User should be single word lower-case string.
 location=/home/jonole/Pictures/zucasa-test/Lise
-
-# Optional username (lower case, single word).
-# Removing line means photos below previous directories are public (for all users).
 user=lise
 
-# Add as many location + user combinations as necessary
 location=/home/jonole/Pictures/zucasa-test/Jon\ Ole
 user=jonole
 
-# Thumbnails size (max height)
+# Thumbnails size in pixels (max height).
 size=80
 
-# Where to split page. Default is 4 months.
+# Where to split page (number of months).
 months=4
