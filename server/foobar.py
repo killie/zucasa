@@ -1,16 +1,42 @@
 import os
 
-def load_locations():
+def load_locations(filename):
     """Load location -> user map from resource file."""
-    return {"/media/loft/Camera": "jonole"}
+    locations = {}
+    location = ""
+    user = ""
+    f = open(filename)
+    for line in f.read().split("\n"):
+        if (line[:9] == "location="):
+            if (location):
+                locations[location] = "public"
+            location = line[9:]
 
-def load_size():
+        elif (line[:5] == "user="):
+            user = line[5:]
+            if (location):
+                locations[location] = user
+                location = ""
+
+    return locations
+
+def load_size(filename):
     """Load thumbnail size from resource file."""
+    f = open(filename)
+    for line in f.read().split("\n"):
+        if (line[:5] == "size="):
+            return int(line[5:])
+
     return 100
 
-def load_months():
+def load_months(filename):
     """Load page size from resouce file."""
-    return 6
+    f = open(filename)
+    for line in f.read().split("\n"):
+        if (line[:6] == "months="):
+            return int(line[6:])
+
+    return 4
 
 def import_photos(locations, size, files, photos, progress):
     """Load photos from locations. Save thumbnails with height equal size argument."""

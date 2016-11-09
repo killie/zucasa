@@ -7,17 +7,17 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from core import get_files_as_map, sort_photos_into_array, Photo
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from foobar import load_locations, import_photos
+from foobar import load_locations, load_size, load_months, import_photos
 
 # Globals
 
+rc_file = getcwd() + "/zucasa.rc"
 app = Flask(__name__)
 root = getcwd() + "/server/static/import"
 progress = "Idle"
 
 # Map of locations -> user
-#locations = {"/media/loft/Camera/100___12": "jonole"}
-locations = load_locations()
+locations = load_locations(rc_file)
 
 # Map file name -> photo
 #files = get_files_as_map(root)
@@ -34,7 +34,7 @@ def main():
     if (files):
         return render_template("index.html", years=files["public"])
     else:
-        return render_template("config.html", locations=locations)
+        return render_template("config.html", locations=locations, size=load_size(rc_file), months=load_months(rc_file))
 
 @app.route("/<user>")
 def user(user):
@@ -71,7 +71,7 @@ def view(user, year, month, day, num):
 
 @app.route("/config", methods=["GET"])
 def get_config():
-    return render_template("config.html", locations=locations)
+    return render_template("config.html", locations=locations, size=load_size(rc_file), months=load_months(rc_file))
 
 @app.route("/config", methods=["POST"])
 def post_config():

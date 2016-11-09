@@ -1,13 +1,19 @@
 # Zucasa configuration file
-# Comments are ignored
+# Comments are ignored. Allowed keys are: location, user, size, months.
 
 # Where to look for photos (*.jpg, *.png, *.gif)
-basedir=/home/jonole/Pictures/zucasa-test/Lise
-# Optional username (lower case, single word). Removing line means previous basedir is for all users.
-username=lise
+location=/home/jonole/Pictures/zucasa-test/Lise
 
-#basedir=/home/jonole/Pictures/zucasa-test/Jon\ Ole
-#username=jonole
+# Optional username (lower case, single word).
+# Removing line means photos below previous directories are public (for all users).
+user=lise
+
+# Add as many location + user combinations as necessary
+location=/home/jonole/Pictures/zucasa-test/Jon\ Ole
+user=jonole
 
 # Thumbnails size (max height)
-size=100
+size=80
+
+# Where to split page. Default is 4 months.
+months=4
