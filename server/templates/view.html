@@ -10,12 +10,12 @@
     <nav class="filmstrip">
       <div class="back3"><i class="fa fa-chevron-left"></i></div>
       {% for thumbnail in thumbnails %}
-      <img class="thumbnail" src="{{ thumbnail }}">
+      <img class="thumbnail" src="/{{ relative_path(thumbnail) }}">
       {% endfor %}
       <div class="forward3"><i class="fa fa-chevron-right"></i></div>
     </nav>
     <div class="container">
-      <div class="photo" style="background-image: url('{{ photo }}');">
+      <div class="photo" style="background-image: url('/{{ relative_path(photo) }}');">
 	<div class="prev">
 	  <i class="fa fa-chevron-left"></i>
 	</div>

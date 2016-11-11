@@ -44,32 +44,33 @@ def user(user):
 
 @app.route("/<user>/<year>/<month>/<day>/<num>")
 def view(user, year, month, day, num):
-    # Create instance of Photo class and load original from disk into cache
-    photo = Photo(user, year, month, day, num)
+    # Find photo in photos map and copy to cache
+    for p in photos[user][year][month][day]:
+        if p.num == num:
+            photo = p
+
     photo.load_photo()
 
-    # Identify photo in sorted array and add surrounding photos to thumbnails array
+    # Find photo in files map to add surrounding thumbnails
+    # TODO: Fix bug where day is sorted descending when it should be ascending
     thumbnails = []
-    i = 0
-    for p in photos[user]:
-        if (p.date_taken == photo.date_taken):
-            if (p.num == int(num)):
-                if (i > 3):
-                    thumbnails.append(photos[user][i - 3].get_thumbnail_src())
-                if (i > 2):
-                    thumbnails.append(photos[user][i - 2].get_thumbnail_src())
-                if (i > 1):
-                    thumbnails.append(photos[user][i - 1].get_thumbnail_src())
-                thumbnails.append(photos[user][i].get_thumbnail_src())
-                if (i + 1 < len(photos[user])):
-                    thumbnails.append(photos[user][i + 1].get_thumbnail_src())
-                if (i + 2 < len(photos[user])):
-                    thumbnails.append(photos[user][i + 2].get_thumbnail_src())
-                if (i + 3 < len(photos[user])):
-                    thumbnails.append(photos[user][i + 3].get_thumbnail_src())
-        i += 1
+    for i, p in enumerate(files[user]):
+        if (p == photo):
+            if (i + 3 < len(files[user])):
+                thumbnails.append(files[user][i + 3].thumbnail)
+            if (i + 2(files[user])):
+                thumbnails.append(files[user][i + 2].thumbnail)
+            if (i + 1 < len(files[user])):
+                thumbnails.append(files[user][i + 1].thumbnail)
+            thumbnails.append(p.thumbnail)
+            if (i > 1):
+                thumbnails.append(files[user][i - 1].thumbnail)
+            if (i > 2):
+                thumbnails.append(files[user][i - 2].thumbnail)
+            if (i > 3):
+                thumbnails.append(files[user][i - 3].thumbnail)
 
-    return render_template("view.html", photo=photo.original_src, thumbnails=thumbnails)
+    return render_template("view.html", photo=photo.cache, thumbnails=thumbnails)
 
 @app.route("/config", methods=["GET"])
 def get_config():

@@ -10,7 +10,8 @@ class Photo:
 
     FORMATS = ["jpg", "png", "gif"]
 
-    def __init__(self, path, modified):
+    def __init__(self, user, path, modified):
+        self.user = user
         self.path = path
         i = self.path.rfind(".")
         self.ext = self.path[i:]
@@ -73,6 +74,10 @@ class Photo:
         else:
             subprocess.check_output(["convert", "-thumbnail", "x" + str(size), self.path, self.thumbnail])
 
+    def load_photo(self):
+        self.cache = os.getcwd() + "/server/static/cache/" + self.user + self.year + self.month + self.day + self.num + self.ext
+        subprocess.check_output(["cp", self.path, self.cache])
+
 
 def import_photos(config, files, photos, progress):
     """Load photos from locations, creating thumbnails and extracting metainfo."""
@@ -95,7 +100,7 @@ def _get_photos_and_files(config, photos, files, progress):
         for path, dirs, filenames in os.walk(location):
             for filename in filenames:
                 modified = os.path.getmtime(path + "/" + filename)
-                photo = Photo(path + "/" + filename, modified)
+                photo = Photo(user, path + "/" + filename, modified)
                 photo.load_creation_and_rotation()
                 if photo.is_valid():
                     files[user].append(photo)
@@ -145,51 +150,3 @@ def _create_thumbnails(photos, size, progress):
                     # TODO: Empty dir
                     for index, photo in enumerate(photos[user][year][month][day]):
                         photo.create_thumbnail(thumb_dir, index + 1, size)
-
-def get_files_as_map(root):
-    """Load all known image files into map with user, year, month and day as keys,
-    then an array of numbers for photos taken on that day."""
-
-    photos = {"public": {}}
-    for user in os.walk(root).next()[1]:
-        photos[user] = {}
-
-    for user in photos.keys():
-        if (os.path.isdir(root + "/" + user)):
-            for year in os.walk(root + "/" + user).next()[1]:
-                photos[user][year] = {}
-                for month in os.walk(root + "/" + user + "/" + year).next()[1]:
-                    photos[user][year][month] = {}
-                    for day in os.walk(root + "/" + user + "/" + year + "/" + month).next()[1]:
-                        photos[user][year][month][day] = []
-                        for path, dirs, files in os.walk(root + "/" + user + "/" + year + "/" + month + "/" + day):
-                            for filename in files:
-                                if (filename.endswith(".txt") == False):
-                                    photos[user][year][month][day].append(filename)
-                        
-                        # Sort file numbers array
-                        photos[user][year][month][day].sort()
-
-    return photos
-
-def sort_photos_into_array(m):
-    """Takes map of photos and creates instances of Photo class which are added to user map,
-    where each user has an array of photos sorted by descending date."""
-
-    photos = {"public": []}
-    for user in m.keys():
-        photos[user] = []
-        for year in m[user].keys():
-            for month in m[user][year].keys():
-                for day in m[user][year][month].keys():
-                    for f in m[user][year][month][day]:
-                        num = f[:f.index(".")]
-                        photo = Photo(user, year, month, day, num)
-                        photo.ext = f[f.index(".") + 1:]
-                        photos[user].append(photo)
-
-        photos[user].sort(key=operator.attrgetter("num"))
-        photos[user].sort(key=operator.attrgetter("date_taken"), reverse=True)
-
-    return photos
-
