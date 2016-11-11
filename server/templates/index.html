@@ -36,8 +36,8 @@
         {% for day in sort_asc(years[year][month].keys()) %}
       <section id="{{ year }}{{ month }}{{ day }}">
 	<div class="date-separator">{{ picture_date(year, month, day) }}</div>
-	{% for num in sort_day(years[year][month][day]) %}
-	  <img class="thumbnail" src="static/import/{{ user }}/{{ year }}/{{ month}}/{{ day }}/{{ num }}">
+	{% for photo in years[year][month][day] %}
+	  <img class="thumbnail" src="{{ relative_path(photo.thumbnail) }}">
         {% endfor %}
       </section>
         {% endfor %}

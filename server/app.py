@@ -29,7 +29,7 @@ photos = {}
 @app.route("/")
 def main():
     if (files):
-        return render_template("index.html", years=files["public"])
+        return render_template("index.html", years=photos["public"])
     else:
         config = Config()
         config.load(rc_file)
@@ -38,7 +38,7 @@ def main():
 @app.route("/<user>")
 def user(user):
     if (user in photos):
-        return render_template("index.html", years=files[user], user=user)
+        return render_template("index.html", years=photos[user], user=user)
     else:
         return "Unknown user '" + user + "'. Try with '/'."
 
@@ -103,21 +103,9 @@ def sort_asc(items):
 def sort_desc(items):
     return sorted(items, reverse=True) 
 
-def pad_num(item):
-    """Finds out where last dot is, and prepends zeros so there are a fixed number of 
-    characters before last dot."""
-    n = item.rfind(".")
-    return ("0" * (5 - n)) + item
-
-def strip_num(item):
-    """Strips leading zeros from text."""
-    return item.lstrip("0")
-
-def sort_day(items):
-    padded = map(pad_num, items)
-    padded.sort()
-    return map(strip_num, padded)
-
+def relative_path(path):
+    length = len(getcwd() + "/server/")
+    return path[length:]
 
 # Startup
 
@@ -127,7 +115,7 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(month_name=get_month_name)
     app.jinja_env.globals.update(sort_asc=sort_asc)
     app.jinja_env.globals.update(sort_desc=sort_desc)
-    app.jinja_env.globals.update(sort_day=sort_day)
+    app.jinja_env.globals.update(relative_path=relative_path)
 
     # Start web server on local IP with default port number
     app.run(sys.argv[1])
