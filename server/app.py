@@ -58,7 +58,7 @@ def view(user, year, month, day, num):
         if (p == photo):
             if (i + 3 < len(files[user])):
                 thumbnails.append(files[user][i + 3].thumbnail)
-            if (i + 2(files[user])):
+            if (i + 2 < len(files[user])):
                 thumbnails.append(files[user][i + 2].thumbnail)
             if (i + 1 < len(files[user])):
                 thumbnails.append(files[user][i + 1].thumbnail)
