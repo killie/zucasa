@@ -17,3 +17,9 @@ $("div.zoom").click(function (e) {
     src = src.replace('url("', '').replace('")', '');
     window.location.href = src;
 });
+
+// Clicking close on view page goes back to /<user>
+$("#view .close").click(function (e) {
+    var url = window.location.href;
+    window.location.href = url.substring(0, url.length - 16);
+});
