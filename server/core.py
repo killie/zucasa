@@ -10,16 +10,20 @@ class Photo:
 
     FORMATS = ["jpg", "png", "gif"]
 
-    def __init__(self, user, path, modified):
+    def __init__(self, user, path):
         self.user = user
         self.path = path
         i = self.path.rfind(".")
         self.ext = self.path[i:]
-        self.modified = modified
 
     def __repr__(self):
         return str(self.created)
-        
+    
+    def set_creation_and_rotation(self, created, rotation):
+        self.created = datetime.fromtimestamp(float(created))
+        self._set_year_month_day()
+        self.rotation = int(rotation)
+
     def load_creation_and_rotation(self):
         # Create date is read from metainfo if file is a photo
         date_string = ""
@@ -36,9 +40,7 @@ class Photo:
 
         # Extract year, month and day as strings from create date
         self.created = datetime.strptime(date_string[:19], "%Y:%m:%d %H:%M:%S")
-        self.year = str(self.created.year)
-        self.month = ("", "0")[self.created.month < 10] + str(self.created.month)
-        self.day = ("", "0")[self.created.day < 10] + str(self.created.day)
+        self._set_year_month_day()
 
         # Get orientation from metainfo so we're ready to rotate when creating thumbnail
         self.rotation = 0
@@ -47,6 +49,11 @@ class Photo:
                 self.rotation = 90
             elif (metainfo["Orientation"] == "Rotate 270 CW"):
                 self.rotation = 270
+
+    def _set_year_month_day(self):
+        self.year = str(self.created.year)
+        self.month = ("", "0")[self.created.month < 10] + str(self.created.month)
+        self.day = ("", "0")[self.created.day < 10] + str(self.created.day)        
 
     def _load_metainfo(self, path):
         """Get metainfo from text file matching name of thumbnail split into map."""
@@ -65,6 +72,10 @@ class Photo:
     def _is_photo(self):
         """Check extension on filename versus accepted formats."""
         return self.ext[1:].lower() in self.FORMATS
+
+    def set_thumbnail(self):
+        path = os.getcwd() + "/server/static/import/photos/" + self.user + "/" + self.year + "/" + self.month + "/" + self.day + "/" + self.num + ".jpg"
+        self.thumbnail = path
 
     def create_thumbnail(self, path, index, size):
         self.num = ((4 - len(str(index))) * "0") + str(index)
@@ -99,8 +110,7 @@ def _get_photos_and_files(config, photos, files, progress):
         
         for path, dirs, filenames in os.walk(location):
             for filename in filenames:
-                modified = os.path.getmtime(path + "/" + filename)
-                photo = Photo(user, path + "/" + filename, modified)
+                photo = Photo(user, path + "/" + filename)
                 photo.load_creation_and_rotation()
                 if photo.is_valid():
                     files[user].append(photo)
@@ -150,3 +160,21 @@ def _create_thumbnails(photos, size, progress):
                     # TODO: Empty dir
                     for index, photo in enumerate(photos[user][year][month][day]):
                         photo.create_thumbnail(thumb_dir, index + 1, size)
+
+
+def files_to_photos(files):
+    """Group files in photos map by user, year, month, day and photo array."""
+    photos = {}
+    for user in files:
+        photos[user] = {}
+        for photo in files[user]:
+            if not photo.year in photos[user]:
+                photos[user][photo.year] = {}
+            if not photo.month in photos[user][photo.year]:
+                photos[user][photo.year][photo.month] = {}
+            if not photo.day in photos[user][photo.year][photo.month]:
+                photos[user][photo.year][photo.month][photo.day] = []
+            photos[user][photo.year][photo.month][photo.day].append(photo)
+
+    return photos
+        

@@ -4,10 +4,9 @@ from os import path, getcwd
 import calendar
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from core import Photo, import_photos
-
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+from core import Photo, import_photos, files_to_photos
 from config import Config
+from csv import save_files, load_files
 
 
 # Globals
@@ -18,10 +17,10 @@ root = getcwd() + "/server/static/import"
 progress = "Idle"
 
 # Map file name -> photo
-files = {}
+files = load_files()
 
 # Map of photos grouped by user, year, month, day
-photos = {}
+photos = files_to_photos(files)
 
 
 # Routes
@@ -83,6 +82,7 @@ def post_config():
     config = Config()
     config.save(request.form, rc_file)
     import_photos(config, files, photos, progress)
+    save_files(files)
     return render_template("progress.html", progress=progress)
 
 @app.route("/progress")
@@ -107,6 +107,7 @@ def sort_desc(items):
 def relative_path(path):
     length = len(getcwd() + "/server/")
     return path[length:]
+
 
 # Startup
 
