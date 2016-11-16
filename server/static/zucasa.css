@@ -1,10 +1,19 @@
 
+/* Fonts */
+
+@font-face {
+    font-family: Lato;
+    src: url("/static/Lato/Lato-Regular.ttf") format("opentype");
+}
+
 /* Variables */
 
 body {
     --dark-color: #444;
     --light-color: lightgray;
     --accent-color: blue;
+    height: 100vh;
+    font-family: Lato;
 }
 
 /* Main page */
@@ -19,7 +28,6 @@ body {
 .sidebar {
     padding: 0.5em;
     width: 200px;
-    height: 100vh;
     background-color: var(--dark-color);
     color: var(--light-color);
 }
@@ -205,4 +213,22 @@ img.thumbnail:hover {
     padding-right: 10px;
 }
 
+/* Config page */
 
+#config {
+    margin: 0;
+    width: 100vw;
+    background-color: var(--dark-color);
+}
+
+#config form {
+    position: absolute;
+    left: 30%;
+    width: 70%;
+    height: 100%;
+    background-color: white;
+}
+
+#config form > div {
+    margin-left: 1em;
+}
