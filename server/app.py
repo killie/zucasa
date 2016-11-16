@@ -82,13 +82,11 @@ def get_config():
 def post_config():
     config = Config()
     config.save(request.form, rc_file)
+    # TODO: Flush all files on disk and photos in memory
     import_photos(config, photo_list, photo_map, progress)
     save_csv(photo_list)
-    return render_template("progress.html", progress=progress)
-
-@app.route("/progress")
-def progress():
-    return render_template("progress.html", progress=progress)
+    user = next(photo_map.__iter__())
+    return render_template("index.html", years=photo_map[user], user=user)
 
 
 # Template helpers
