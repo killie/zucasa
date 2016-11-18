@@ -23,3 +23,10 @@ $("#view .close").click(function (e) {
     var url = window.location.href;
     window.location.href = url.substring(0, url.length - 16);
 });
+
+// Clicking cancel on config page goes to previous page
+$("#config .cancel").click(function (e) {
+    if (window.history.length) {
+	window.history.back();
+    }
+});

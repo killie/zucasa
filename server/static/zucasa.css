@@ -232,3 +232,27 @@ img.thumbnail:hover {
 #config form > div {
     margin-left: 1em;
 }
+
+#config .location input:nth-child(1) {
+    width: 30em;
+}
+
+#config .location input:nth-child(2) {
+    width: 8em;
+}
+
+#config .location {
+    padding-bottom: 0.5em;
+}
+
+#config input[type=number] {
+    width: 4em;
+}
+
+#config form > div {
+    padding-bottom: 1.5em;
+}
+
+#config form > div:last-child {
+    margin-top: 1em;
+}
