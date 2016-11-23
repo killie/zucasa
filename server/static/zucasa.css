@@ -128,44 +128,25 @@ img.thumbnail:hover {
 #view nav {
     display: flex;
     justify-content: center;
-    height: 100px;
     padding: 0.5em;
     background-color: white;
 }
 
 #view nav div {
-    display: inline-block;
-    padding-top: 25%;
-    padding-bottom: 25%;
-    margin-top: 5px;
+    margin: 4px;
     font-size: 36px;
-    line-height: 50px;
     color: var(--dark-color);
-    width: 50px;
-    height: 50%;
+    width: 1em;
     text-align: center;
-    vertical-align: middle;
+}
+
+#view nav div i {
+    position: relative;
+    top: 50%;
+    transform: translateY(-60%);
 }
 
 #view nav div:hover {
-    color: var(--light-color);
-    cursor: pointer;
-}
-
-/* Close button */
-
-#view .top-right {
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
-}
-
-#view .close {
-    font-size: 2em;
-    color: var(--dark-color);
-}
-
-#view .close:hover {
     color: var(--light-color);
     cursor: pointer;
 }
