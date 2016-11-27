@@ -18,5 +18,3 @@ Runs on GNU/Linux using Python, Flask, ExifTool and ImageMagick.
 2. Run `zucasa.sh` to start web server
 
 See output from startup script to find where your gallery is hosted.
-
-If you're using usernames for your photos then append username to URL, for instance http://192.168.123.123:5000/bob

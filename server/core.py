@@ -1,8 +1,10 @@
 import os
-from shutil import copyfile
+import sys
 from datetime import datetime
+from uuid import uuid4
 import operator
 import subprocess
+from multiprocessing import Pipe
 
 class Photo:
     """Holds reference to a photo via user, year, month, day and number. 
@@ -15,6 +17,7 @@ class Photo:
         self.path = path
         i = self.path.rfind(".")
         self.ext = self.path[i:]
+        self.thumbnail = str(uuid4()) + ".jpg"
 
     def __repr__(self):
         return str(self.created)
@@ -32,7 +35,7 @@ class Photo:
             if ("Create Date" in metainfo):
                 date_string = metainfo["Create Date"]
             else:
-                print "Skipping " + self.path
+                print "Could not get 'create date' from " + self.path
 
         if not date_string:
             self.created = False
@@ -41,6 +44,7 @@ class Photo:
         # Extract year, month and day as strings from create date
         self.created = datetime.strptime(date_string[:19], "%Y:%m:%d %H:%M:%S")
         self._set_year_month_day()
+        # TODO: Update thumbnail with year/month/day part
 
         # Get orientation from metainfo so we're ready to rotate when creating thumbnail
         self.rotation = 0
@@ -74,13 +78,7 @@ class Photo:
         """Check extension on filename versus accepted formats."""
         return self.ext[1:].lower() in self.FORMATS
 
-    def set_thumbnail(self):
-        path = os.getcwd() + "/server/static/import/photos/" + self.user + "/" + self.year + "/" + self.month + "/" + self.day + "/" + self.num + ".jpg"
-        self.thumbnail = path
-
-    def create_thumbnail(self, path, index, size):
-        self.num = ((4 - len(str(index))) * "0") + str(index)
-        self.thumbnail = path + "/" + self.num + ".jpg"
+    def create_thumbnail(self, path, size):
         if self.rotation > 0:
             subprocess.check_output(["convert", "-rotate", str(self.rotation), "-thumbnail", "x" + str(size), self.path, self.thumbnail])
         else:
@@ -93,57 +91,81 @@ class Photo:
         self.cache = directory + "/" + self.user + self.year + self.month + self.day + self.num + self.ext
         subprocess.check_output(["cp", self.path, self.cache])
 
+def delete_files():
+    """Remove directories where import and cache files are stored."""
+    _delete_directories()
 
-def import_photos(config, photo_list, photo_map, progress):
-    """Load photos from locations, creating thumbnails and extracting metainfo."""
+def _delete_directories():
+    _delete_directory(os.getcwd() + "/server/static/import")
+    _delete_directory(os.getcwd() + "/server/static/cache")
+
+def _delete_directory(directory):
+    if os.path.exists(directory):
+        subprocess.check_output(["rm", "-R", directory])
+
+def import_photos(config, pipe):
+    """Load photos from locations, reading metadata and creating thumbnails. Sending photos back over pipe continuously."""
     # Start by extracting date and time photo was taken from metainfo along with rotation
-    _get_photos(config, photo_list, photo_map, progress)
+    photos = _get_photos(config, pipe)
     # When all locations have been read sort photos by creation date
-    sort_photos(photo_list, photo_map)
+    pipe.send({"status": "Preparing folder structure..."})
+    grouped = group_photos(photos)
     # Save thumbnails with height equal size argument, and rotate as necessary
-    _create_thumbnails(photo_map, config.size, progress)
+    pipe.send({"status": "Creating thumbnails..."})
+    _create_thumbnails(grouped, config.size)
+    pipe.send({"status": "Done"})
 
-def _empty_photos(photo_list, photo_map):
-    """Empty photos map and delete all instances in files map. Does not touch files on disk."""
-
-
-def _get_photos(config, photo_list, photo_map, progress):
+def _get_photos(config, pipe):
+    photos = {}
     for location in config.locations.keys():
-        print "Importing " + location
+        pipe.send({"status": "Importing " + location})
         user = config.locations[location]
-        if (not user in photo_list):
-            photo_list[user] = []
-        if (not user in photo_map):
-            photo_map[user] = {}
+        photos[user] = []
         
         for path, dirs, filenames in os.walk(location):
             for filename in filenames:
                 photo = Photo(user, path + "/" + filename)
                 photo.load_creation_and_rotation()
+                # TODO: Sending photo instance before thumbnail has been set
                 if photo.is_valid():
-                    photo_list[user].append(photo)
-                    if not photo.year in photo_map[user]:
-                        photo_map[user][photo.year] = {}
-                    if not photo.month in photo_map[user][photo.year]:
-                        photo_map[user][photo.year][photo.month] = {}
-                    if not photo.day in photo_map[user][photo.year][photo.month]:
-                        photo_map[user][photo.year][photo.month][photo.day] = []
-                    photo_map[user][photo.year][photo.month][photo.day].append(photo)
+                    pipe.send({"imported": photo})
+                    photos[user].append(photo)
+                else:
+                    pipe.send({"skipped": photo})
 
-        print str(len(photo_list[user])) + " photos imported"
+    return photos
 
-def sort_photos(photo_list, photo_map):
-    """Sort photos by ascending create date. Sort files on descending create date."""
-    for user in photo_map:
-        for year in photo_map[user]:
-            for month in photo_map[user][year]:
-                for day in photo_map[user][year][month]:
-                    photo_map[user][year][month][day].sort(key=operator.attrgetter("created"))
+def group_photos(photos):
+    """Sort photos by ascending create date. Sort files on descending create date. Return photos grouped by day."""
+    grouped = _group_by_date(photos)
+    for user in grouped:
+        for year in grouped[user]:
+            for month in grouped[user][year]:
+                for day in grouped[user][year][month]:
+                    grouped[user][year][month][day].sort(key=operator.attrgetter("created"))
 
-    for user in photo_list:
-        photo_list[user].sort(key=operator.attrgetter("created"), reverse=True)
+    for user in photos:
+        photos[user].sort(key=operator.attrgetter("created"), reverse=True)
 
-def _create_thumbnails(photo_map, size, progress):
+    return grouped
+
+def _group_by_date(photos):
+    """Group photos in map by user, year, month, day and photo array."""
+    grouped = {}
+    for user in photos:
+        grouped[user] = {}
+        for photo in photos[user]:
+            if not photo.year in grouped[user]:
+                grouped[user][photo.year] = {}
+            if not photo.month in grouped[user][photo.year]:
+                grouped[user][photo.year][photo.month] = {}
+            if not photo.day in grouped[user][photo.year][photo.month]:
+                grouped[user][photo.year][photo.month][photo.day] = []
+            grouped[user][photo.year][photo.month][photo.day].append(photo)
+
+    return grouped
+
+def _create_thumbnails(grouped, size):
     """Create thumbnails in user/year/month/day hierarchy below import/photos."""
     directory = os.getcwd() + "/server/static/import" 
     if not os.path.exists(directory):
@@ -151,38 +173,20 @@ def _create_thumbnails(photo_map, size, progress):
     if not os.path.exists(directory + "/photos"):
         os.makedirs(directory + "/photos")
 
-    for user in photo_map:
+    for user in grouped:
         user_dir = directory + "/photos/" + user
         if not os.path.exists(user_dir):
             os.makedirs(user_dir)
-        for year in photo_map[user]:
+        for year in grouped[user]:
             if not os.path.exists(user_dir + "/" + year):
                 os.makedirs(user_dir + "/" + year)
-            for month in photo_map[user][year]:
+            for month in grouped[user][year]:
                 if not os.path.exists(user_dir + "/" + year + "/" + month):
                     os.makedirs(user_dir + "/" + year + "/" + month)
-                for day in photo_map[user][year][month]:
+                for day in grouped[user][year][month]:
                     thumb_dir = user_dir + "/" + year + "/" + month + "/" + day
                     if not os.path.exists(thumb_dir):
                         os.makedirs(thumb_dir)
-                    # TODO: Empty dir
-                    for index, photo in enumerate(photo_map[user][year][month][day]):
-                        photo.create_thumbnail(thumb_dir, index + 1, size)
+                    for photo in grouped[user][year][month][day]:
+                        photo.create_thumbnail(thumb_dir, size)
 
-
-def group_by_date(photo_list):
-    """Group photo_list in photo_map map by user, year, month, day and photo array."""
-    photo_map = {}
-    for user in photo_list:
-        photo_map[user] = {}
-        for photo in photo_list[user]:
-            if not photo.year in photo_map[user]:
-                photo_map[user][photo.year] = {}
-            if not photo.month in photo_map[user][photo.year]:
-                photo_map[user][photo.year][photo.month] = {}
-            if not photo.day in photo_map[user][photo.year][photo.month]:
-                photo_map[user][photo.year][photo.month][photo.day] = []
-            photo_map[user][photo.year][photo.month][photo.day].append(photo)
-
-    return photo_map
-        
