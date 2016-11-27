@@ -53,17 +53,21 @@ def user(user):
         _load_photos()
         return render_template("index.html", years=photo_map[user], user=user)
 
-@app.route("/<user>/<year>/<month>/<day>/<num>")
-def view(user, year, month, day, num):
+@app.route("/<user>/<year>/<month>/<day>/<uuid>")
+def view(user, year, month, day, uuid):
     global photo_list, photo_map
     if not photo_map:
         photo_list = _load_photos()
         photo_map = _group_photos(photo_list)
 
     # Find photo in photos map and copy to cache
+    photo = None
     for p in photo_map[user][year][month][day]:
-        if p.num == num:
+        if p.uuid == uuid:
             photo = p
+
+    if not photo:
+        return "This is not a photograph"
 
     photo.load_photo()
 
@@ -136,7 +140,7 @@ def _db_writer(pipe):
                 _sync_db()
                 break
         elif "skipped" in message:
-            print "Skipped " + message["skipped"]
+            print "Skipping " + message["skipped"].path
         elif "imported" in message:
             photo = message["imported"]
             if not photo.user in photos:
@@ -180,6 +184,7 @@ def get_progress():
 
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""
+    photos = {}
     db = shelve.open(db_file)
     if "photos" in db:
         photos = db["photos"]
@@ -188,6 +193,7 @@ def _load_photos():
 
 def _group_photos(photos):
     return group_photos(photos)
+
 
 # Template helpers
 

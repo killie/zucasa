@@ -7,7 +7,7 @@ import subprocess
 from multiprocessing import Pipe
 
 class Photo:
-    """Holds reference to a photo via user, year, month, day and number. 
+    """Holds reference to a photo via user, year, month, day and uuid. 
     Has methods to get metainfo and original image."""
 
     FORMATS = ["jpg", "png", "gif"]
@@ -17,7 +17,8 @@ class Photo:
         self.path = path
         i = self.path.rfind(".")
         self.ext = self.path[i:]
-        self.thumbnail = str(uuid4()) + ".jpg"
+        self.uuid = str(uuid4()).replace("-", "")
+        self.thumbnail = self.uuid + ".jpg"
 
     def __repr__(self):
         return str(self.created)
@@ -44,7 +45,10 @@ class Photo:
         # Extract year, month and day as strings from create date
         self.created = datetime.strptime(date_string[:19], "%Y:%m:%d %H:%M:%S")
         self._set_year_month_day()
-        # TODO: Update thumbnail with year/month/day part
+
+        # Update thumbnail with year/month/day folder structure
+        self.thumbnail = os.getcwd() + "/server/static/import/photos/" + \
+            self.user + "/" + self.year + "/" + self.month + "/" + self.day + "/" + self.thumbnail
 
         # Get orientation from metainfo so we're ready to rotate when creating thumbnail
         self.rotation = 0
@@ -78,7 +82,7 @@ class Photo:
         """Check extension on filename versus accepted formats."""
         return self.ext[1:].lower() in self.FORMATS
 
-    def create_thumbnail(self, path, size):
+    def create_thumbnail(self, size):
         if self.rotation > 0:
             subprocess.check_output(["convert", "-rotate", str(self.rotation), "-thumbnail", "x" + str(size), self.path, self.thumbnail])
         else:
@@ -88,7 +92,7 @@ class Photo:
         directory = os.getcwd() + "/server/static/cache"
         if not os.path.exists(directory):
             os.makedirs(directory)
-        self.cache = directory + "/" + self.user + self.year + self.month + self.day + self.num + self.ext
+        self.cache = directory + "/" + self.user + self.year + self.month + self.day + self.uuid + self.ext
         subprocess.check_output(["cp", self.path, self.cache])
 
 def delete_files():
@@ -118,7 +122,7 @@ def import_photos(config, pipe):
 def _get_photos(config, pipe):
     photos = {}
     for location in config.locations.keys():
-        pipe.send({"status": "Importing " + location})
+        pipe.send({"status": "Importing " + location + "..."})
         user = config.locations[location]
         photos[user] = []
         
@@ -167,7 +171,7 @@ def _group_by_date(photos):
 
 def _create_thumbnails(grouped, size):
     """Create thumbnails in user/year/month/day hierarchy below import/photos."""
-    directory = os.getcwd() + "/server/static/import" 
+    directory = os.getcwd() + "/server/static/import"
     if not os.path.exists(directory):
         os.makedirs(directory)
     if not os.path.exists(directory + "/photos"):
@@ -188,5 +192,5 @@ def _create_thumbnails(grouped, size):
                     if not os.path.exists(thumb_dir):
                         os.makedirs(thumb_dir)
                     for photo in grouped[user][year][month][day]:
-                        photo.create_thumbnail(thumb_dir, size)
+                        photo.create_thumbnail(size)
 

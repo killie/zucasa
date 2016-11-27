@@ -41,7 +41,12 @@ $(".photo .next").click(function (e) {
 // Clicking close on view page goes back to /<user>
 $("#view .close").click(function (e) {
     var url = window.location.href;
-    window.location.href = url.substring(0, url.length - 16);
+    var chunks = url.split("/");
+    var ending = "";
+    for (var i = chunks.length - 4; i < chunks.length; i++) {
+	ending += "/" + chunks[i];
+    }
+    window.location.href = url.substring(0, url.length - ending.length);
 });
 
 // Clicking cancel on config page goes to previous page
