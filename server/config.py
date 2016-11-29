@@ -2,11 +2,11 @@ import os
 
 class Config:
     """Holds configuration values and supports reading and writing to resource file.
-    Skips comments and replaces all locations, users, size and months values."""
+    Skips comments and replaces all locations, users, size and limit values."""
 
     INITIAL_COMMENT_BLOCK = [
         "# Zucasa configuration file.",
-        "# Comments are ignored. Allowed keys are: location, user, size, months.",
+        "# Comments are ignored. Allowed keys are: location, user, size, limit.",
         "# File will be replaced when using /config from web interface.",
         "",
         "# Add location + user pairs for each photo folder to import (recursively).",
@@ -15,16 +15,16 @@ class Config:
 
     SIZE_COMMENT = "# Thumbnails size in pixels (max height)."
 
-    MONTHS_COMMENT = "# Where to split page (number of months)."
+    LIMIT_COMMENT = "# Where to split page (number of photos on page)."
 
     DEFAULT_SIZE = 80
-    DEFAULT_MONTHS = 4
+    DEFAULT_LIMIT = 400
 
     # Public properties
 
     locations = {}
     size = DEFAULT_SIZE
-    months = DEFAULT_MONTHS
+    limit = DEFAULT_LIMIT
 
     # Load from resource file
 
@@ -32,7 +32,7 @@ class Config:
         """Load from resource file."""
         self.locations = self._load_locations(filename)
         self.size = self._load_size(filename)
-        self.months = self._load_months(filename)
+        self.limit = self._load_limit(filename)
 
     def _load_locations(self, filename):
         """Load location -> user map from resource file."""
@@ -63,14 +63,14 @@ class Config:
 
         return self.DEFAULT_SIZE
 
-    def _load_months(self, filename):
+    def _load_limit(self, filename):
         """Load page size from resouce file."""
         f = open(filename)
         for line in f.read().split("\n"):
-            if (line[:6] == "months="):
+            if (line[:6] == "limit="):
                 return int(line[6:])
 
-        return self.DEFAULT_MONTHS
+        return self.DEFAULT_LIMIT
 
     # Save to resource file
 
@@ -84,8 +84,8 @@ class Config:
         for param in params:
             if param == "size": 
                 self.size = params[param]
-            elif param == "months":
-                self.months = params[param]
+            elif param == "limit":
+                self.limit = params[param]
 
         self.locations = {}
         for i in range(1, 50):
@@ -107,7 +107,7 @@ class Config:
         f.write(self.SIZE_COMMENT + "\n")
         f.write("size=" + str(self.size) + "\n\n")
 
-        f.write(self.MONTHS_COMMENT + "\n")
-        f.write("months=" + str(self.months) + "\n")
+        f.write(self.LIMIT_COMMENT + "\n")
+        f.write("limit=" + str(self.limit) + "\n")
 
         f.close()

@@ -22,36 +22,45 @@ photo_list = {}
 # Photos in user map grouped by year, month and day
 photo_map = {}
 
+# TODO: Use config value instead
+# TODO: Saving config with new "limit" and no other changes should not do full import
+limit = 500 
 
 # Routes
 
 @app.route("/")
 def main():
-    global photo_list, photo_map
-    if not photo_map:
-        photo_list = _load_photos()
-        photo_map = _group_photos(photo_list)
-
-    if photo_map:
-        print "Get first user" # TODO: How to do this again?
-        return render_template("index.html", years=photo_map["public"])
-    else:
-        config = Config()
-        config.load(rc_file)
-        return render_template("config.html", config=config)
+    return _show_filtered_photos(request.args)
 
 @app.route("/<user>")
 def user(user):
+    return _show_filtered_photos({"user": user})
+
+def _show_filtered_photos(args):
+    items = _filter_photos(args)
+    photos = _group_photos(items)
+    return render_template("index.html", photos=photos["items"])
+
+def _filter_photos(args):
+    """Filter photo_list by arguments. Return sorted list by descending date in a map with key 'items'."""
     global photo_list, photo_map
     if not photo_map:
         photo_list = _load_photos()
         photo_map = _group_photos(photo_list)
 
-    if user in photo_map:
-        return render_template("index.html", years=photo_map[user], user=user)
+    if "date" in args:
+        print "Convert " + str(args["date"]) + " to datetime and use it on photos"
     else:
-        _load_photos()
-        return render_template("index.html", years=photo_map[user], user=user)
+        print "Use latest date in photo_list and show X photos"
+
+    photos = []
+    for user in photo_list:
+        for photo in photo_list[user]:
+            if "user" in args and photo.user == args["user"]:
+                # TODO: Make sure all args match, not just one
+                print "Adding " + str(photo.created)
+                photos.append(photo)
+    return {"items": photos}
 
 @app.route("/<user>/<year>/<month>/<day>/<uuid>")
 def view(user, year, month, day, uuid):
