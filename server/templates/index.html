@@ -8,48 +8,66 @@
   </head>
   <body id="main">
     <nav class="sidebar">
-      <ul>
-      {% for year in sort_desc(photos.keys()) %}
-	<li class="expanded">
-	  <a href="#{{ year }}">{{ year }}</a>
-	  <ul>
-	  {% for month in sort_asc(photos[year].keys()) %}
-	    <li class="collapsed">
-	      <a href="#{{ year }}{{ month }}">{{ month_name(month) }}</a>
-	      <ul>
-	      {% for day in sort_asc(photos[year][month].keys()) %}
-	        <li class="collapsed">
-		  <a href="#{{ year }}{{ month }}{{ day }}">{{ day }}</a>
-		</li>
-              {% endfor %}
-	      </ul>
-	    </li>
+      <div class="dates">
+	<ul>
+	{% for year in sort_desc(dated.keys()) %}
+	  <li class="expanded">
+	    <a href="#{{ year }}">{{ year }}</a>
+	    <ul>
+	    {% for month in sort_asc(dated[year].keys()) %}
+	      <li class="collapsed">
+	        <a href="#{{ year }}{{ month }}">{{ month_name(month) }}</a>
+	        <ul>
+	        {% for day in sort_asc(dated[year][month].keys()) %}
+	          <li class="collapsed">
+		    <a href="#{{ year }}{{ month }}{{ day }}">{{ day }}</a>
+		  </li>
+                {% endfor %}
+	        </ul>
+	      </li>
+	    {% endfor %}
+            </ul>
+	  </li>
+        {% endfor %}
+	</ul>
+      </div>
+      <div class="filters">
+	<div class="header">Users</div>
+	<div class="users">
+	  {% for user in sort_asc(users.keys()) %}
+	  <div{% if users[user] == True %} class="selected"{% endif %}>{{ user }}</div>
 	  {% endfor %}
-          </ul>  
-	</li>
-      {% endfor %}
-      </ul>
+	</div>
+	<div class="header">Cameras</div>
+	<div class="cameras">
+	  {% for camera in sort_asc(cameras.keys()) %}
+	  <div{% if cameras[camera] == True %} class="selected"{% endif %}>{{ camera }}</div>
+	  {% endfor %}
+	</div>
+	<div class="header">Tags</div>
+	<div class="tags">
+	  {% for tag in sort_asc(tags.keys()) %}
+	  <div{% if tags[tag] == True %} class="selected"{% endif %}>{{ tag }}</div>
+	  {% endfor %}
+	</div>
+      </div>
+      <div class="links">
+	<a href="/config"><i class="fa fa-cog"></i> Config</a>
+      </div>
     </nav>
     <div class="page-content">
-    {% for year in sort_desc(photos.keys()) %}
-      {% for month in sort_asc(photos[year].keys()) %}
-        {% for day in sort_asc(photos[year][month].keys()) %}
+    {% for year in sort_desc(dated.keys()) %}
+      {% for month in sort_asc(dated[year].keys()) %}
+        {% for day in sort_asc(dated[year][month].keys()) %}
       <section id="{{ year }}{{ month }}{{ day }}">
 	<div class="date-separator">{{ picture_date(year, month, day) }}</div>
-	{% for photo in photos[year][month][day] %}
+	{% for photo in dated[year][month][day] %}
 	  <img class="thumbnail" src="{{ relative_path(photo.thumbnail) }}">
         {% endfor %}
       </section>
         {% endfor %}
       {% endfor %}
     {% endfor %}
-    </div>
-    <div class="options">
-      <div class="config">
-	<a href="/config">
-	  <i class="fa fa-cog"></i>
-	</a>
-      </div>
     </div>
     <script type="text/javascript" src="/static/zepto.min.js"></script>
     <script type="text/javascript" src="/static/zucasa.js"></script>

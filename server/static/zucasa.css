@@ -11,7 +11,7 @@
 body {
     --dark-color: #444;
     --light-color: lightgray;
-    --accent-color: blue;
+    --accent-color: royalblue;
     height: 100vh;
     font-family: Lato;
 }
@@ -26,29 +26,37 @@ body {
 /* Sidebar */
 
 .sidebar {
+    display: flex;
+    flex-direction: column;
     padding: 0.5em;
     width: 200px;
     background-color: var(--dark-color);
     color: var(--light-color);
 }
 
-.sidebar ul {
+/* Dates */
+
+.dates {
+    flex: 1;
+}
+
+.dates ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
-.sidebar ul ul {
+.dates ul ul {
     margin-top: 0.3em;
     padding-bottom: 0.2em;
 }
 
-.sidebar li {
+.dates li {
     padding-left: 1em;
     margin-bottom: 0.3em;
 }
 
-.sidebar li.expanded:before {
+.dates li.expanded:before {
     content: "\f107";
     font-family: FontAwesome;
     display: inline-block;
@@ -56,11 +64,11 @@ body {
     width: 1em;
 }
 
-.sidebar li.expanded ul {
+.dates li.expanded ul {
     display: list-item;
 }
 
-.sidebar li.collapsed:before {
+.dates li.collapsed:before {
     content: "\f105";
     font-family: FontAwesome;
     display: inline-block;
@@ -68,11 +76,53 @@ body {
     width: 1em;
 }
 
-.sidebar li.collapsed ul {
+.dates li.collapsed ul {
     display: none;
 }
 
-.sidebar li a {
+.dates li a {
+    color: var(--light-color);
+    text-decoration: none;
+}
+
+/* Filters */
+
+.filters {
+    padding-bottom: 1.5em;
+}
+
+.filters .header {
+    padding-top: 0.8em;
+    padding-bottom: 0.2em;
+    font-size: smaller;
+    font-weight: bold;
+}
+
+.users, .cameras, .tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.users > div, .cameras > div, .tags > div {
+    margin-right: 0.2em;
+    margin-bottom: 0.1em;
+    padding: 0.1em;
+    white-space: nowrap;
+}
+
+.users > div.selected, .cameras > div.selected, .tags > div.selected {
+    background-color: var(--accent-color);
+    color: var(--light-color);
+    border-radius: 5px;
+}
+
+.users > div:hover, .cameras > div:hover, .tags > div:hover {
+    cursor: pointer;
+}
+
+/* Links */
+
+.links a {
     color: var(--light-color);
     text-decoration: none;
 }
@@ -92,17 +142,6 @@ body {
     font-size: small;
     color: var(--dark-color);
     padding-bottom: 0.5em;
-}
-
-/* Options */
-
-#main .options {
-    padding: 0.5em;
-}
-
-#main .options div a {
-    font-size: 2em;
-    color: var(--dark-color);
 }
 
 /* Thumbnails */

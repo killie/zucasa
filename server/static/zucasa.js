@@ -21,6 +21,11 @@ function openThumbnail(url) {
     window.location.href = href.replace("/static/import/photos", "");
 }
 
+// Clicking filter in sidebar
+$(".users > div, .cameras > div, .tags > div").click(function (e) {
+    $(e.target).toggleClass("selected");
+});
+
 // Show original when clicking zoom on photo
 $(".photo .zoom").click(function (e) {
     var src = $(e.target.parentElement).css("background-image");
