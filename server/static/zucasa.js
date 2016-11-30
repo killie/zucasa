@@ -8,6 +8,8 @@ $(".sidebar li a").click(function (e) {
 
 // Open photo when clicking thumbnail
 $("img.thumbnail").click(function (e) {
+    // Remember main location for 30 minutes, for use when pressing close from view page
+    document.cookie = "mainLocation=" + document.location.href + "; max-age=60*30;";
     openThumbnail(e.target.src);
 });
 
@@ -43,15 +45,11 @@ $(".photo .next").click(function (e) {
     openThumbnail(getThumbnailUrl(4));
 });
 
-// Clicking close on view page goes back to /<user>
+// Clicking close on view page goes back previous main location
 $("#view .close").click(function (e) {
-    var url = window.location.href;
-    var chunks = url.split("/");
-    var ending = "";
-    for (var i = chunks.length - 4; i < chunks.length; i++) {
-	ending += "/" + chunks[i];
-    }
-    window.location.href = url.substring(0, url.length - ending.length);
+    // https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+    var mainLocation = document.cookie.replace(/(?:(?:^|.*;\s*)mainLocation\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    window.location.href = mainLocation;
 });
 
 // Clicking cancel on config page goes to previous page
