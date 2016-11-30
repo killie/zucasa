@@ -12,7 +12,6 @@ body {
     --dark-color: #444;
     --light-color: lightgray;
     --accent-color: royalblue;
-    height: 100vh;
     font-family: Lato;
 }
 
@@ -20,7 +19,12 @@ body {
 
 #main {
     margin: 0;
+}
+
+.main-container {
     display: flex;
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* Sidebar */
@@ -38,6 +42,8 @@ body {
 
 .dates {
     flex: 1;
+    height: auto;
+    overflow: auto;
 }
 
 .dates ul {
@@ -132,6 +138,8 @@ body {
 #main .page-content {
     flex: 1;
     padding: 0.5em;
+    height: auto;
+    overflow: auto;
 }
 
 #main .page-content section {
