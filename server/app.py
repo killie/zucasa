@@ -44,9 +44,6 @@ def user(user):
 def _show_filtered_photos(args):
     valid_args = _convert_args(args)
     photos = _filter_photos(valid_args)
-    if len(photos) == 0:
-        return _show_config()
-
     dated = _group_photos(photos)
 
     user_map = {}
@@ -60,11 +57,15 @@ def _show_filtered_photos(args):
     for camera in cameras:
         if not camera in camera_map:
             camera_map[camera] = False
+        if camera in valid_args["cameras"]:
+            camera_map[camera] = True
 
     tag_map = {}
     for tag in tags:
         if not tag in tag_map:
             tag_map[tag] = False
+        if tag in valid_args["tags"]:
+            tag_map[tag] = True
 
     return render_template("index.html", dated=dated, users=user_map, cameras=camera_map, tags=tag_map)
 
@@ -72,6 +73,10 @@ def _convert_args(args):
     valid = {"users": [], "cameras": [], "tags": [], "date": None}
     if "users" in args:
         valid["users"] = args["users"].split(",")
+    if "cameras" in args:
+        valid["cameras"] = args["cameras"].split(",")
+    if "tags" in args:
+        valid["tags"] = args["tags"].split(",")
     return valid
 
 def _filter_photos(args):
@@ -92,8 +97,8 @@ def _filter_photos(args):
     photos = []
     for photo in photo_list:
         if not args["users"] or photo.user in args["users"]:
-            # TODO: Make sure all args match, not just one
-            photos.append(photo)
+            if not args["cameras"] or photo.camera in args["cameras"]:
+                photos.append(photo)
     return photos
 
 def _load_users(photos):

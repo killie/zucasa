@@ -9,7 +9,9 @@ $(".sidebar li a").click(function (e) {
 // Open photo when clicking thumbnail
 $("img.thumbnail").click(function (e) {
     // Remember main location for 30 minutes, for use when pressing close from view page
-    document.cookie = "mainLocation=" + document.location.href + "; max-age=60*30;";
+    if ($("body#main").length) {
+	document.cookie = "mainLocation=" + document.location.href + "; max-age=60*30;";
+    }
     openThumbnail(e.target.src);
 });
 
@@ -25,7 +27,36 @@ function openThumbnail(url) {
 
 // Clicking filter in sidebar
 $(".users > div, .cameras > div, .tags > div").click(function (e) {
+    var users = [], cameras = [], tags = [], url, first = true;
+
+    function addFilters(key, values) {
+	if (values.length) {
+	    url += (first ? "?" : "&") + key + "=" + values.join(",");
+	    first = false;
+	}
+    }
+
+    // Toggle clicked filter
     $(e.target).toggleClass("selected");
+
+    // Collect current filters
+    $(".sidebar .selected").each(function () {
+	var filter = encodeURIComponent(this.innerText);
+	var header = this.parentElement.className;
+	if (header === "users") users.push(filter);
+	if (header === "cameras") cameras.push(filter);
+	if (header === "tags") tags.push(filter);
+    });
+
+    // Create new URL with current filters
+    url = "http://" + window.location.host + "/";
+    addFilters("users", users);
+    addFilters("cameras", cameras);
+    addFilters("tags", tags);
+
+    // Maintain selected date if possible
+    url += window.location.hash;
+    window.location.href = url;
 });
 
 // Show original when clicking zoom on photo
