@@ -116,14 +116,14 @@ def _filter_on_date(dated, from_date, max_limit):
                     if to_date == None and counter >= max_limit:
                         to_date = photo.created
 
-                    if not to_date == None and photo.created < to_date:
+                    if not to_date == None and photo.created.date() < to_date.date():
                         has_older = True
                         return {"limited": filtered, "has_newer": has_newer, "has_older": has_older}
 
-                    if not from_date == None and photo.created > from_date:
+                    if not from_date == None and photo.created.date() > from_date.date():
                         has_newer = True
 
-                    if from_date == None or photo.created < from_date:
+                    if from_date == None or photo.created.date() <= from_date.date():
                         if not year in filtered:
                             filtered[year] = {}
                         if not month in filtered[year]:
