@@ -81,6 +81,19 @@ $(".users > div, .cameras > div, .tags > div").click(function (e) {
     window.location.href = url;
 });
 
+$(".show-more").click(function (e) {
+    var s;
+    if (e.target.innerText === "Show newer") {
+	s = $("section").eq(0).attr("id");
+	console.debug("Show newer than", s);
+    } else if (e.target.innerText === "Show older") {
+	s = $("section").eq(-1).attr("id");
+	console.debug("Show older than", s);
+    } else {
+	console.warn("Unknown .show-more text");
+    }
+});
+
 // Show original when clicking zoom on photo
 $(".photo .zoom").click(function (e) {
     var src = $(e.target.parentElement).css("background-image");
