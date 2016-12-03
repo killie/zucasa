@@ -44,7 +44,8 @@ function getThumbnailUrl(index) {
 function openThumbnail(url) {
     // Remove extension, but it can be more than 3 chars
     var href = url.substring(0, url.length - 4);
-    window.location.href = href.replace("/static/import/photos", "");
+    var s = href.replace("/static/import/photos", "") + window.location.search;
+    window.location.href = s;
 }
 
 // Clicking filter in sidebar
