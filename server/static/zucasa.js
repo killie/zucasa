@@ -81,6 +81,7 @@ $(".users > div, .cameras > div, .tags > div").click(function (e) {
     window.location.href = url;
 });
 
+// Clicking 'Show newer' or 'Show older' buttons
 $(".show-more").click(function (e) {
     var s;
     if (e.target.innerText === "Show newer") {
