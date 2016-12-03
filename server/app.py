@@ -174,24 +174,25 @@ def view(user, year, month, day, uuid):
     photo.load_photo()
 
     # Find photo in photo list to add surrounding thumbnails
-    # TODO: Thumbnails must be selected from filtered photos
+    valid_args = _convert_args(request.args)
+    photos = _filter_photos(valid_args)
 
     thumbnails = []
-    for i, p in enumerate(photo_list):
+    for i, p in enumerate(photos):
         if (p == photo):
-            if (i + 3 < len(photo_list)):
-                thumbnails.append(photo_list[i + 3].thumbnail)
-            if (i + 2 < len(photo_list)):
-                thumbnails.append(photo_list[i + 2].thumbnail)
-            if (i + 1 < len(photo_list)):
-                thumbnails.append(photo_list[i + 1].thumbnail)
+            if (i + 3 < len(photos)):
+                thumbnails.append(photos[i + 3].thumbnail)
+            if (i + 2 < len(photos)):
+                thumbnails.append(photos[i + 2].thumbnail)
+            if (i + 1 < len(photos)):
+                thumbnails.append(photos[i + 1].thumbnail)
             thumbnails.append(p.thumbnail)
             if (i > 1):
-                thumbnails.append(photo_list[i - 1].thumbnail)
+                thumbnails.append(photos[i - 1].thumbnail)
             if (i > 2):
-                thumbnails.append(photo_list[i - 2].thumbnail)
+                thumbnails.append(photos[i - 2].thumbnail)
             if (i > 3):
-                thumbnails.append(photo_list[i - 3].thumbnail)
+                thumbnails.append(photos[i - 3].thumbnail)
 
     return render_template("view.html", photo=photo.cache, thumbnails=thumbnails)
 
