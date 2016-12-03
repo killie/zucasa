@@ -29,7 +29,7 @@ tags = []
 
 # TODO: Use config value instead
 # TODO: Saving config with new "limit" and no other changes should not do full import
-limit = 500 
+limit = 300
 
 # Routes
 
@@ -45,6 +45,7 @@ def _show_filtered_photos(args):
     valid_args = _convert_args(args)
     photos = _filter_photos(valid_args)
     dated = _group_photos(photos)
+    result = _filter_on_date(dated, valid_args["date"], limit)
 
     user_map = {}
     for user in users:
@@ -67,7 +68,7 @@ def _show_filtered_photos(args):
         if tag in valid_args["tags"]:
             tag_map[tag] = True
 
-    return render_template("index.html", dated=dated, users=user_map, cameras=camera_map, tags=tag_map)
+    return render_template("index.html", dated=dated, users=user_map, cameras=camera_map, tags=tag_map, limited=result["limited"], has_newer=result["has_newer"], has_older=result["has_older"])
 
 def _convert_args(args):
     valid = {"users": [], "cameras": [], "tags": [], "date": None}
@@ -89,17 +90,46 @@ def _filter_photos(args):
         cameras = _load_cameras(photo_list)
         tags = _load_tags(photo_list)
 
-    if "date" in args:
-        print "Convert " + str(args["date"]) + " to datetime and use it on photos"
-    else:
-        print "Use latest date in photo_list and show X photos"
-
     photos = []
     for photo in photo_list:
         if not args["users"] or photo.user in args["users"]:
             if not args["cameras"] or photo.camera in args["cameras"]:
                 photos.append(photo)
+
     return photos
+
+def _filter_on_date(dated, from_date, max_limit):
+    filtered = {}
+    counter = 0
+    to_date = None
+    has_newer = False
+    has_older = False
+
+    for year in sort_desc(dated):
+        for month in sort_desc(dated[year]):
+            for day in sort_desc(dated[year][month]):
+                for photo in dated[year][month][day]:
+                    if to_date == None and counter >= max_limit:
+                        to_date = photo.created
+
+                    if not to_date == None and photo.created < to_date:
+                        has_older = True
+                        return {"limited": filtered, "has_newer": has_newer, "has_older": has_older}
+
+                    if not from_date == None and photo.created > from_date:
+                        has_newer = True
+
+                    if from_date == None or photo.created < from_date:
+                        if not year in filtered:
+                            filtered[year] = {}
+                        if not month in filtered[year]:
+                            filtered[year][month] = {}
+                        if not day in filtered[year][month]:
+                            filtered[year][month][day] = []
+                        filtered[year][month][day].append(photo)
+                        counter += 1
+
+    return {"limited": filtered, "has_newer": has_newer, "has_older": has_older}
 
 def _load_users(photos):
     users = []
@@ -140,6 +170,8 @@ def view(user, year, month, day, uuid):
     photo.load_photo()
 
     # Find photo in photo list to add surrounding thumbnails
+    # TODO: Thumbnails must be selected from filtered photos
+
     thumbnails = []
     for i, p in enumerate(photo_list):
         if (p == photo):
@@ -191,7 +223,7 @@ def _flush_database(running, status):
     db = shelve.open(db_file)
     db.clear()
     db["running"] = running
-    db["status"] = status # TODO: Use string array instead to keep all log messagesp
+    db["status"] = status # TODO: Use string array instead to keep all log messages
     db["photos"] = []
     db.close()
     db.sync()
@@ -212,6 +244,7 @@ def _db_writer(pipe):
                 _sync_db()
                 break
         elif "skipped" in message:
+            # TODO: Need Log class to save skipped and non photos to log-file
             print "Skipping " + message["skipped"].path
         elif "imported" in message:
             photo = message["imported"]

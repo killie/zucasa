@@ -57,18 +57,24 @@
 	</div>
       </nav>
       <div class="page-content">
-	{% for year in sort_desc(dated.keys()) %}
-	{% for month in sort_asc(dated[year].keys()) %}
-        {% for day in sort_asc(dated[year][month].keys()) %}
+	{% if has_newer %}
+	<div class="show-more"><span>Show newer</span></div>
+	{% endif %}
+	{% for year in sort_desc(limited.keys()) %}
+	{% for month in sort_desc(limited[year].keys()) %}
+        {% for day in sort_desc(limited[year][month].keys()) %}
 	<section id="{{ year }}{{ month }}{{ day }}">
 	  <div class="date-separator">{{ picture_date(year, month, day) }}</div>
-	  {% for photo in dated[year][month][day] %}
+	  {% for photo in limited[year][month][day] %}
 	  <img class="thumbnail" src="{{ relative_path(photo.thumbnail) }}">
           {% endfor %}
 	</section>
         {% endfor %}
 	{% endfor %}
 	{% endfor %}
+	{% if has_older %}
+	<div class="show-more"><span>Show older</span></div>
+	{% endif %}
       </div>
     </div>
     <script type="text/javascript" src="/static/zepto.min.js"></script>

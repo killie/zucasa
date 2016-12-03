@@ -146,10 +146,26 @@ body {
     padding-bottom: 1.5em;
 }
 
-.date-separator {
+#main .date-separator {
     font-size: small;
     color: var(--dark-color);
     padding-bottom: 0.5em;
+}
+
+#main .show-more {
+    text-align: center;
+    margin: 1em;
+}
+
+#main .show-more > span {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    padding: 0.4em 2em;
+    border-radius: 1em;
+}
+
+#main .show-more > span:hover {
+    cursor: pointer;
 }
 
 /* Thumbnails */
