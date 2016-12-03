@@ -3,6 +3,7 @@ from multiprocessing import Process, Pipe
 import sys
 from os import path, getcwd
 import calendar
+from datetime import datetime
 import shelve
 from time import sleep
 
@@ -78,6 +79,9 @@ def _convert_args(args):
         valid["cameras"] = args["cameras"].split(",")
     if "tags" in args:
         valid["tags"] = args["tags"].split(",")
+    if "date" in args:
+        s = args["date"]
+        valid["date"] = datetime(int(s[:4]), int(s[4:6]), int(s[6:8]))
     return valid
 
 def _filter_photos(args):

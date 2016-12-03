@@ -1,6 +1,28 @@
 
 var progressTimer;
 
+// Check if a date section was clicked in sidebar
+window.onhashchange = function (e) {
+    var hash = e.newURL.substring(e.newURL.indexOf("#")), section, url, i, s;
+    if (hash.length < 9) return;
+    section = $(hash);
+    if (section.length == 0) {
+	// Section was not found, load from server given date from hash
+	url = window.location.href;
+	i = url.indexOf("#");
+	if (i !== -1) url = url.substring(0, i);
+	i = url.indexOf("date=");
+	if (i === -1) {
+	    // Adding date as new GET argument
+	    url += (url.indexOf("?") === -1 ? "?" : "&") + "date=" + hash.substring(1);
+	} else {
+	    // Replacing current date value
+	    url = url.substring(0, i) + "date=" + hash.substring(1) + url.substring(i + 13);
+	}
+	window.location = url;
+    }
+};
+
 // Open/close branches in sidebar on click
 $(".sidebar li a").click(function (e) {
     $(e.target.parentElement).toggleClass("collapsed").toggleClass("expanded");
@@ -124,3 +146,10 @@ function stopProgressTimer() {
     console.debug("Stopping timer");
     window.clearInterval(progressTimer);
 }
+
+// If showing main page put focus in scrollable page content
+$(function (e) {
+    if ($("#main").length) {
+	$(".page-content").focus();
+    }
+});
