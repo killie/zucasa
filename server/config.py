@@ -18,7 +18,7 @@ class Config:
     LIMIT_COMMENT = "# Where to split page (number of photos on page)."
 
     DEFAULT_SIZE = 80
-    DEFAULT_LIMIT = 400
+    DEFAULT_LIMIT = 300
 
     # Public properties
 
