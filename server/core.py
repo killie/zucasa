@@ -41,7 +41,12 @@ class Photo:
             return
 
         # Extract year, month and day as strings from create date
-        self.created = datetime.strptime(date_string[:19], "%Y:%m:%d %H:%M:%S")
+        try:
+            self.created = datetime.strptime(date_string[:19], "%Y:%m:%d %H:%M:%S")
+        except ValueError:
+            self.created = False
+            return
+
         self._set_year_month_day()
 
         # Update thumbnail with year/month/day folder structure
