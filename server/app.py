@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from urllib import unquote
 from multiprocessing import Process, Pipe
 import sys
 from os import path, getcwd
@@ -31,6 +32,7 @@ tags = []
 # TODO: Use config value instead
 # TODO: Saving config with new "limit" and no other changes should not do full import
 limit = 300
+
 
 # Routes
 
@@ -154,47 +156,44 @@ def _load_tags(photos):
 
 @app.route("/<user>/<year>/<month>/<day>/<uuid>")
 def view(user, year, month, day, uuid):
-    global photo_list, photo_map, users, cameras, tags
-    if not photo_map:
-        photo_list = _load_photos()
-        photo_map = _group_photos(photo_list)
-        users = _load_users(photo_list)
-        cameras = _load_cameras(photo_list)
-        tags = _load_tags(photo_list)
+    valid_args = _convert_args(request.args)
+    photos = _filter_photos(valid_args)
 
-    # Find photo in photos map and copy to cache
-    photo = None
-    for p in photo_map[year][month][day]:
-        if p.uuid == uuid:
-            photo = p
-
+    photo = _find_photo_by_uuid(photos, uuid)
     if not photo:
         return "This is not a photograph"
 
     photo.load_photo()
 
     # Find photo in photo list to add surrounding thumbnails
-    valid_args = _convert_args(request.args)
-    photos = _filter_photos(valid_args)
-
-    thumbnails = []
-    for i, p in enumerate(photos):
-        if (p == photo):
-            if (i + 3 < len(photos)):
-                thumbnails.append(photos[i + 3].thumbnail)
-            if (i + 2 < len(photos)):
-                thumbnails.append(photos[i + 2].thumbnail)
-            if (i + 1 < len(photos)):
-                thumbnails.append(photos[i + 1].thumbnail)
-            thumbnails.append(p.thumbnail)
-            if (i > 1):
-                thumbnails.append(photos[i - 1].thumbnail)
-            if (i > 2):
-                thumbnails.append(photos[i - 2].thumbnail)
-            if (i > 3):
-                thumbnails.append(photos[i - 3].thumbnail)
+    items = _get_photos(photos, photo, -3) + [photo] + _get_photos(photos, photo, 3)
+    thumbnails = map(lambda p: p.thumbnail, items)
 
     return render_template("view.html", photo=photo.cache, thumbnails=thumbnails)
+
+def _find_photo_by_uuid(photos, uuid):
+    for photo in photos:
+        if photo.uuid == uuid:
+            return photo
+    return None
+
+def _get_photos(photos, photo, count):
+    asc = sorted(photos, key=lambda p: p.created)
+
+    r = []
+    if count > 0:
+        r = range(1, count + 1)
+    else:
+        r = range(count, 0)
+
+    items = []
+    for i, p in enumerate(asc):
+        if p == photo:
+            for j in r:
+                if j + i > -1 and j + i < len(asc):
+                    items.append(asc[j + i])
+
+    return items
 
 @app.route("/config", methods=["GET"])
 def get_config():
@@ -286,6 +285,38 @@ def get_progress():
     status = db["status"]
     db.close()
     return jsonify({"status": status})
+
+@app.route("/_scroll_thumbnails")
+def scroll_thumbnails():
+    """Function takes current URL filter (users, cameras, etc.)
+    and selected photo and returns +/- thumbnails."""
+    args = _filter_to_args(request.args["filter"])
+    valid_args = _convert_args(args)
+    photos = _filter_photos(valid_args)
+    uuid = request.args["uuid"]
+    count = int(request.args["count"])
+
+    photo = _find_photo_by_uuid(photos, uuid)
+    if not photo:
+        return "This is not a photograph"
+
+    if count > 0:
+        items = [photo] + _get_photos(photos, photo, count * 2)
+    else:
+        items = _get_photos(photos, photo, count * 2) + [photo]
+
+    thumbnails = map(lambda p: p.thumbnail, items)
+    return jsonify(map(relative_path, thumbnails))
+
+def _filter_to_args(filter):
+    """Converts URL arguments on the form ?a=b&c=d into {"a": "b", "c": "d"}."""
+    args = {}
+    pairs = filter[1:].split("&")
+    for pair in pairs:
+        values = pair.split("=")
+        if len(values) == 2:
+            args[values[0]] = unquote(values[1])
+    return args
 
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""

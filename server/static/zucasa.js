@@ -29,13 +29,15 @@ $(".sidebar li a").click(function (e) {
 });
 
 // Open photo when clicking thumbnail
-$("img.thumbnail").click(function (e) {
-    // Remember main location for 30 minutes, for use when pressing close from view page
+$("img.thumbnail").click(showThumbnail);
+
+function showThumbnail(event) {
+    // Remember hash on main location for 30 minutes, for use when pressing close from view page
     if ($("body#main").length) {
-	document.cookie = "mainLocation=" + document.location.href + "; max-age=60*30;";
+	document.cookie = "mainLocation=" + document.location.hash + "; max-age=60*30;";
     }
-    openThumbnail(e.target.src);
-});
+    openThumbnail(event.target.src);
+}
 
 function getThumbnailUrl(index) {
     return $("img.thumbnail").eq(index).attr("src");
@@ -113,11 +115,43 @@ $(".photo .next").click(function (e) {
     openThumbnail(getThumbnailUrl(4));
 });
 
+// Scroll thumbnails while looking at a photo
+$("#view .forward3, #view .back3").click(function (e) {
+    var direction = e.target.parentElement.className;
+    var filmstrip = $("#view .filmstrip");
+    var thumbnail = filmstrip.find("img.thumbnail").eq(3);
+    var uuid = thumbnail.attr("src").split("/").pop();
+    uuid = uuid.substring(0, uuid.indexOf("."));
+    $.getJSON("/_scroll_thumbnails", {
+	uuid: uuid,
+	filter: window.location.search,
+	count: direction === "forward3" ? 3 : -3
+    }, function (thumbnails) {
+	if ((thumbnails || []).length) {
+	    console.debug(thumbnails);
+	    // Replace current thumbnails and append new, with click handler
+	    filmstrip.find("img.thumbnail").remove();
+	    thumbnails.forEach(function (src) {
+		var img = $("<img>").attr("class", "thumbnail").attr("src", "/" + src);
+		img.click(showThumbnail);
+		filmstrip.append(img);
+	    });
+	    // Move > and x to end of filmstrip
+	    var forward3 = filmstrip.find(".forward3").detach();
+	    filmstrip.append(forward3);
+	    var close = filmstrip.find(".close").detach();
+	    filmstrip.append(close);
+	}
+    });
+});
+
 // Clicking close on view page goes back previous main location
 $("#view .close").click(function (e) {
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
-    var mainLocation = document.cookie.replace(/(?:(?:^|.*;\s*)mainLocation\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    window.location.href = mainLocation;
+    var hash = document.cookie.replace(/(?:(?:^|.*;\s*)mainLocation\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    var url = window.location.origin + "/" + window.location.search;
+    if (hash) url += hash;
+    window.location.href = url;
 });
 
 // Clicking cancel on config page goes to previous page
