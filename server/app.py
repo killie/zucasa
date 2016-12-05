@@ -169,7 +169,7 @@ def view(user, year, month, day, uuid):
     items = _get_photos(photos, photo, -3) + [photo] + _get_photos(photos, photo, 3)
     thumbnails = map(lambda p: p.thumbnail, items)
 
-    return render_template("view.html", photo=photo.cache, thumbnails=thumbnails)
+    return render_template("view.html", photo=photo, thumbnails=thumbnails)
 
 def _find_photo_by_uuid(photos, uuid):
     for photo in photos:
@@ -317,6 +317,13 @@ def _filter_to_args(filter):
         if len(values) == 2:
             args[values[0]] = unquote(values[1])
     return args
+
+@app.route("/_get_metainfo")
+def get_metainfo():
+    uuid = request.args["uuid"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    metainfo = photo.load_metainfo()
+    return jsonify(metainfo)
 
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""

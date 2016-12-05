@@ -257,6 +257,38 @@ img.thumbnail:hover {
     padding-right: 10px;
 }
 
+#view .date {
+    margin-left: 0.3em;
+    margin-top: -0.3em;
+    font-size: 2em;
+    color: var(--light-color);
+}
+
+#view .date:hover {
+    cursor: pointer;
+}
+
+#view .metainfo {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    margin: 0;
+    list-style: none;
+    padding-left: 1em;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+}
+
+#view .metainfo:hover {
+    cursor: pointer;
+}
+
+#view .metainfo li span:last-child {
+    font-weight: bold;
+    padding-left: 0.5em;
+}
+
 /* Config page */
 
 #config {

@@ -119,16 +119,12 @@ $(".photo .next").click(function (e) {
 $("#view .forward3, #view .back3").click(function (e) {
     var direction = e.target.parentElement.className;
     var filmstrip = $("#view .filmstrip");
-    var thumbnail = filmstrip.find("img.thumbnail").eq(3);
-    var uuid = thumbnail.attr("src").split("/").pop();
-    uuid = uuid.substring(0, uuid.indexOf("."));
     $.getJSON("/_scroll_thumbnails", {
-	uuid: uuid,
+	uuid: getPhotoId(),
 	filter: window.location.search,
 	count: direction === "forward3" ? 3 : -3
     }, function (thumbnails) {
 	if ((thumbnails || []).length) {
-	    console.debug(thumbnails);
 	    // Replace current thumbnails and append new, with click handler
 	    filmstrip.find("img.thumbnail").remove();
 	    thumbnails.forEach(function (src) {
@@ -145,6 +141,13 @@ $("#view .forward3, #view .back3").click(function (e) {
     });
 });
 
+function getPhotoId() {
+    var filmstrip = $("#view .filmstrip");
+    var thumbnail = filmstrip.find("img.thumbnail").eq(3);
+    var uuid = thumbnail.attr("src").split("/").pop();
+    return uuid.substring(0, uuid.indexOf("."));
+}
+
 // Clicking close on view page goes back previous main location
 $("#view .close").click(function (e) {
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
@@ -152,6 +155,22 @@ $("#view .close").click(function (e) {
     var url = window.location.origin + "/" + window.location.search;
     if (hash) url += hash;
     window.location.href = url;
+});
+
+$("#view .date").click(function () {
+    $.getJSON("/_get_metainfo", {
+	uuid: getPhotoId()
+    }, function (metainfo) {
+	var overlay = $("<ul>").attr("class", "metainfo");
+	for (var key in metainfo) {
+	    var row = $("<li>").append($("<span>").text(key + ":")).append($("<span>").text(metainfo[key]));
+	    overlay.append(row);
+	}
+	overlay.click(function () {
+	    $(this).remove();
+	});
+	$("#view").append(overlay);
+    });
 });
 
 // Clicking cancel on config page goes to previous page
@@ -196,9 +215,18 @@ function stopProgressTimer() {
     window.clearInterval(progressTimer);
 }
 
-// If showing main page put focus in scrollable page content
+// Code to run after page has been loaded
 $(function (e) {
+    // If showing main page put focus in scrollable page content
     if ($("#main").length) {
 	$(".page-content").focus();
     }
+
+    // Create date tooltip from thumbnail path
+    $("img.thumbnail").each(function () {
+	parts = $(this).attr("src").split("/");
+	var i = parts.length - 2;
+	var title = [parts[i - 2], parts[i - 1], parts[i]].join("-");
+	$(this).attr("title", title);
+    });
 });

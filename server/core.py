@@ -28,7 +28,7 @@ class Photo:
         # Create date is read from metainfo if file is a photo
         date_string = ""
         if self._is_photo():
-            metainfo = self._load_metainfo(self.path)
+            metainfo = self.load_metainfo()
             if "Create Date" in metainfo:
                 date_string = metainfo["Create Date"]
             else:
@@ -62,7 +62,7 @@ class Photo:
         self.month = ("", "0")[self.created.month < 10] + str(self.created.month)
         self.day = ("", "0")[self.created.day < 10] + str(self.created.day)        
 
-    def _load_metainfo(self, path):
+    def load_metainfo(self):
         """Get metainfo from text file matching name of thumbnail split into map."""
         metainfo = {}
         lines = subprocess.check_output(["exiftool", self.path])
