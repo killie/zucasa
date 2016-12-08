@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 from datetime import datetime
 from uuid import uuid4
 import subprocess
@@ -32,7 +33,8 @@ class Photo:
             if "Create Date" in metainfo:
                 date_string = metainfo["Create Date"]
             else:
-                print "Could not get 'create date' from " + self.path
+                date_string = self._get_date()
+
             if "Camera Model Name" in metainfo:
                 self.camera = metainfo["Camera Model Name"]
 
@@ -84,6 +86,24 @@ class Photo:
     def _is_photo(self):
         """Check extension on filename versus accepted formats."""
         return self.ext[1:].lower() in self.FORMATS
+
+    def _get_date(self):
+        """If metainfo is not found or 'Create Date' is not included, try other ways to date a photo.
+        Return date string on the form "YYYY:mm:dd HH:MM:SS" (19 characters)."""
+
+        # Check regex in filename *YYYYmmdd?HHMMSS*
+        pattern = "\d{8}(.)\d{6}"
+        match = re.search(pattern, self.path)
+        if match:
+            s = match.group(0)
+            if len(s) == 15:
+                s = s[:8] + s[9:]
+            return s[0:4] + ":" + s[4:6] + ":" + s[6:8] + " " + s[8:10] + ":" + s[10:12] + ":" + s[12:14]
+
+        # Use Linux mtime (returns float)
+        epoch = os.path.getmtime(self.path)
+        modified = datetime.utcfromtimestamp(epoch)
+        return str(modified).replace("-", ":")
 
     def create_thumbnail(self, size):
         if self.rotation > 0:
