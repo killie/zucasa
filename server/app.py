@@ -9,7 +9,8 @@ import shelve
 from time import sleep
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from core import Photo, import_photos, group_photos, delete_files
+from photo import Photo
+from core import import_photos, group_photos, delete_files
 from config import Config
 
 
