@@ -325,6 +325,30 @@ def get_metainfo():
     metainfo = photo.load_metainfo()
     return jsonify(metainfo)
 
+@app.route("/_show_more")
+def show_more():
+    """Takes first/last date and goes back/forward x number of photos to find new date.
+    This is returned to client who in turn requests to show photos from this date."""
+    uuid = request.args["uuid"]
+    direction = request.args["direction"]
+    args = _filter_to_args(request.args["filter"])
+    valid_args = _convert_args(args)
+    photos = _filter_photos(valid_args)
+
+    # Get +/- a number of filtered photos
+    for index, photo in enumerate(photos):
+        if photo.uuid == uuid:
+            if direction == "older":
+                # Show photos from this date (and backwards)
+                return jsonify({"date": photo.year + photo.month + photo.day})
+
+            # More difficult to ensure selected date is included when loading newer photos
+            i = max(0, index - limit)
+            break
+
+    # Next index to show photos are now at index 'i'. Return its date.
+    return jsonify({"date": photos[i].year + photos[i].month + photos[i].day})
+
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""
     photos = []

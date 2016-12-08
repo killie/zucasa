@@ -3,25 +3,29 @@ var progressTimer;
 
 // Check if a date section was clicked in sidebar
 window.onhashchange = function (e) {
-    var hash = e.newURL.substring(e.newURL.indexOf("#")), section, url, i, s;
+    var hash = e.newURL.substring(e.newURL.indexOf("#")), section;
     if (hash.length < 9) return;
     section = $(hash);
     if (section.length == 0) {
 	// Section was not found, load from server given date from hash
-	url = window.location.href;
-	i = url.indexOf("#");
-	if (i !== -1) url = url.substring(0, i);
-	i = url.indexOf("date=");
-	if (i === -1) {
-	    // Adding date as new GET argument
-	    url += (url.indexOf("?") === -1 ? "?" : "&") + "date=" + hash.substring(1);
-	} else {
-	    // Replacing current date value
-	    url = url.substring(0, i) + "date=" + hash.substring(1) + url.substring(i + 13);
-	}
-	window.location = url;
+	loadPhotosFromDate(hash.substring(1));
     }
 };
+
+function loadPhotosFromDate(date) {
+    var url = window.location.href;
+    var i = url.indexOf("#");
+    if (i !== -1) url = url.substring(0, i);
+    i = url.indexOf("date=");
+    if (i === -1) {
+	// Adding date as new GET argument
+	url += (url.indexOf("?") === -1 ? "?" : "&") + "date=" + date;
+    } else {
+	// Replacing current date value
+	url = url.substring(0, i) + "date=" + date + url.substring(i + 13);
+    }
+    window.location = url;
+}
 
 // Open/close branches in sidebar on click
 $(".sidebar li a").click(function (e) {
@@ -86,16 +90,24 @@ $(".users > div, .cameras > div, .tags > div").click(function (e) {
 
 // Clicking 'Show newer' or 'Show older' buttons
 $(".show-more").click(function (e) {
-    var s;
+    var uuid, direction;
     if (e.target.innerText === "Show newer") {
-	s = $("section").eq(0).attr("id");
-	console.debug("Show newer than", s);
+	uuid = getIdFromThumbnail($("img.thumbnail").eq(0));
+	direction = "newer";
     } else if (e.target.innerText === "Show older") {
-	s = $("section").eq(-1).attr("id");
-	console.debug("Show older than", s);
+	uuid = getIdFromThumbnail($("img.thumbnail").eq(-1));
+	direction = "older";
     } else {
 	console.warn("Unknown .show-more text");
+	return;
     }
+    $.getJSON("/_show_more", {
+	uuid: uuid,
+	direction: direction,
+	filter: window.location.search
+    }, function (payload) {
+	loadPhotosFromDate(payload["date"]);
+    });
 });
 
 // Show original when clicking zoom on photo
@@ -144,6 +156,10 @@ $("#view .forward3, #view .back3").click(function (e) {
 function getPhotoId() {
     var filmstrip = $("#view .filmstrip");
     var thumbnail = filmstrip.find("img.thumbnail").eq(3);
+    return getIdFromThumbnail(thumbnail);
+}
+
+function getIdFromThumbnail(thumbnail) {
     var uuid = thumbnail.attr("src").split("/").pop();
     return uuid.substring(0, uuid.indexOf("."));
 }
@@ -206,12 +222,10 @@ function getProgress() {
 }
 
 function startProgressTimer() {
-    console.debug("Starting timer");
     progressTimer = window.setInterval(getProgress, 1000);
 }
 
 function stopProgressTimer() {
-    console.debug("Stopping timer");
     window.clearInterval(progressTimer);
 }
 
@@ -222,8 +236,8 @@ $(function (e) {
 	$(".page-content").focus();
     }
 
-    // Create date tooltip from thumbnail path
-    $("img.thumbnail").each(function () {
+    // Create date tooltip from thumbnail path, but just on view page
+    $("#view img.thumbnail").each(function () {
 	parts = $(this).attr("src").split("/");
 	var i = parts.length - 2;
 	var title = [parts[i - 2], parts[i - 1], parts[i]].join("-");
