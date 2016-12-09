@@ -7,36 +7,48 @@
     <title>Zucasa</title>
   </head>
   <body id="config">
-    <form action="config" method="post">
-      <div>
-	<h1>Locations</h1>
-	<p>Where to load photos from disk.</p>
+    <div>
+      <form action="config" method="post">
 	<div>
-	  {% for location in config.locations.keys() %}
-	  <div class="location">
-	    <input type="text" title="Absolute path on disk" name="location{{ loop.index }}" value="{{ location }}">
-	    <input type="text" title="Username. Use 'public' for shared photos." name="user{{ loop.index }}" value="{{ config.locations[location] }}">
-	    <input type="button" class="remove" value="Remove">
+	  <h1>Locations</h1>
+	  <p>Where to load photos from disk.</p>
+	  <div class="locations">
+	    {% for location in config.locations.keys() %}
+	    <div class="location">
+	      <input type="text" title="Absolute path on disk" name="location{{ loop.index }}" value="{{ location }}">
+	      <input type="text" title="Username. Use 'public' for shared photos." name="user{{ loop.index }}" value="{{ config.locations[location] }}">
+	      <input type="button" class="remove" value="Remove">
+	    </div>
+	    {% endfor %}
 	  </div>
-	  {% endfor %}
+	  <input type="button" class="add" value="Add">
 	</div>
-	<input type="button" class="add" value="Add">
-      </div>
+	<div>
+	  <h1>Thumbnail size</h1>
+	  <p>Height of thumbnails.</p>
+	  <input type="number" name="size" value="{{ config.size }}"> <span>px</span>
+	</div>
+	<div>
+	  <p>Import replaces all current photos in memory and thumbnails on disk.</p>
+	  <input type="submit" class="import" value="Import">
+	</div>
+      </form>
+      <form action="settings" method="post">
+	<div>
+	  <h1>Page break</h1>
+	  <p>How much to display at a time.</p>
+	  <input type="number" name="limit" value="{{ config.limit }}"> <span>photos</span>
+	</div>
+	<div>
+	  <p>Clicking save does not result in new import.</p>
+	  <input type="submit" class="save" value="Save">
+	</div>
+      </form>
       <div>
-	<h1>Thumbnail size</h1>
-	<p>Height of thumbnails.</p>
-	<input type="number" name="size" value="{{ config.size }}"> <span>px</span>
+	<p>Click back to return to front page.</p>
+	<input type="button" class="back" value="Back">
       </div>
-      <div>
-	<h1>Page break</h1>
-	<p>How much to display at a time.</p>
-	<input type="number" name="limit" value="{{ config.limit }}"> <span>photos</span>
-      </div>
-      <div>
-	<input type="submit" class="save" value="Save">
-	<input type="button" class="cancel" value="Cancel">
-      </div>
-    </form>
+    </div>
     <script type="text/javascript" src="/static/zepto.min.js"></script>
     <script type="text/javascript" src="/static/zucasa.js"></script>
   </body>

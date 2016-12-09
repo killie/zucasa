@@ -301,7 +301,7 @@ img.thumbnail:hover {
     background-color: var(--dark-color);
 }
 
-#config form {
+#config > div {
     position: absolute;
     left: 30%;
     width: 70%;
@@ -309,7 +309,11 @@ img.thumbnail:hover {
     background-color: white;
 }
 
-#config form > div {
+#config form {
+    padding-top: 2em;
+}
+
+#config form > div, #config > div > div {
     margin-left: 1em;
 }
 

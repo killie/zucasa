@@ -189,6 +189,30 @@ $("#view .date").click(function () {
     });
 });
 
+// Clicking add and remove on locations in config page
+$("#config input.add").on("click", function (e) {
+    var location = $("<div>").attr("class", "location");
+    location.append($("<input>").attr("type", "text").attr("title", "Absolute path on disk").css("margin-right", "3px"));
+    location.append($("<input>").attr("type", "text").attr("title", "Username. Use 'public' for shared photos.").css("margin-right", "3px"));
+    location.append($("<input>").attr("type", "button").attr("class", "remove").val("Remove").click(removeLocation));
+    $(".locations").append(location);
+    updateLocationRows();
+});
+
+$("#config input.remove").click(removeLocation);
+
+function removeLocation(event) {
+    $(event.target.parentElement).remove();
+    updateLocationRows();
+}
+
+function updateLocationRows() {
+    $("#config .location").each(function (index, row) {
+	$(row).find("input").eq(0).attr("name", "location" + Number(index + 1));
+	$(row).find("input").eq(1).attr("name", "user" + Number(index + 1));
+    });
+}
+
 // Clicking cancel on config page goes to previous page
 $("#config .cancel").click(function (e) {
     if (window.history.length) {

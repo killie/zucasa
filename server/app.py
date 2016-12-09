@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from urllib import unquote
 from multiprocessing import Process, Pipe
 import sys
@@ -30,8 +30,6 @@ users = []
 cameras = []
 tags = []
 
-# TODO: Use config value instead
-# TODO: Saving config with new "limit" and no other changes should not do full import
 limit = 300
 
 
@@ -207,7 +205,7 @@ def _show_config():
 
 @app.route("/config", methods=["POST"])
 def post_config():
-    global photo_list, photo_map, users, cameras, tags
+    global photo_list, photo_map, users, cameras, tags, limit
     photo_list = []
     photo_map = {}
     users = []
@@ -215,6 +213,7 @@ def post_config():
     tags = []
 
     config = Config()
+    config.limit = limit
     config.save(request.form, rc_file)
 
     # Clear database when doing import
@@ -228,8 +227,7 @@ def post_config():
     producer = Process(target=_import_all, args=(config, p1))
     producer.start()
 
-    # Show progress page while import runs
-    return render_template("progress.html")
+    return redirect("")
 
 def _flush_database(running, status):
     db = shelve.open(db_file)
@@ -286,6 +284,16 @@ def _sync_db():
     db["running"] = False
     db.sync()
     db.close()
+
+@app.route("/settings", methods=["POST"])
+def post_settings():
+    global limit
+    limit = request.form["limit"]
+    config = Config()
+    config.load(rc_file)
+    config.limit = limit
+    config.save(None, rc_file)
+    return redirect("")
     
 @app.route("/_get_progress")
 def get_progress():

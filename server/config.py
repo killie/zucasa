@@ -76,7 +76,8 @@ class Config:
 
     def save(self, params, filename):
         """Replace public properties and overwrite resource file."""
-        self._extract_params(params)
+        if params:
+            self._extract_params(params)
         self._replace_file(filename)
 
     def _extract_params(self, params):
