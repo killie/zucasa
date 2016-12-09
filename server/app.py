@@ -207,6 +207,13 @@ def _show_config():
 
 @app.route("/config", methods=["POST"])
 def post_config():
+    global photo_list, photo_map, users, cameras, tags
+    photo_list = []
+    photo_map = {}
+    users = []
+    cameras = []
+    tags = []
+
     config = Config()
     config.save(request.form, rc_file)
 
