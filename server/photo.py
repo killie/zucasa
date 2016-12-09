@@ -103,11 +103,24 @@ class Photo:
         modified = datetime.utcfromtimestamp(epoch)
         return str(modified).replace("-", ":")
 
+    def _check_thumbnail_dir(self):
+        d = os.getcwd() + "/server/static/import/photos"
+        if not os.path.exists(d + "/" + self.user):
+            os.makedirs(d + "/" + self.user)
+        d += "/" + self.user
+        if not os.path.exists(d + "/" + self.year):
+            os.makedirs(d + "/" + self.year)
+        if not os.path.exists(d + "/" + self.year + "/" + self.month):
+            os.makedirs(d + "/" + self.year + "/" + self.month)
+        if not os.path.exists(d + "/" + self.year + "/" + self.month + "/" + self.day):
+            os.makedirs(d + "/" + self.year + "/" + self.month + "/" + self.day)
+
     def create_thumbnail(self, size):
+        self._check_thumbnail_dir()
         if self.rotation > 0:
-            subprocess.check_output(["convert", "-rotate", str(self.rotation), "-thumbnail", "x" + str(size), self.path, self.thumbnail])
+            subprocess.Popen(["convert", "-rotate", str(self.rotation), "-thumbnail", "x" + str(size), self.path, self.thumbnail])
         else:
-            subprocess.check_output(["convert", "-thumbnail", "x" + str(size), self.path, self.thumbnail])
+            subprocess.Popen(["convert", "-thumbnail", "x" + str(size), self.path, self.thumbnail])
 
     def load_photo(self):
         directory = os.getcwd() + "/server/static/cache"
