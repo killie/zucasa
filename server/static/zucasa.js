@@ -173,6 +173,32 @@ $("#view .close").click(function (e) {
     window.location.href = url;
 });
 
+$("#view .description").click(function (e) {
+    if (e.target.nodeName !== "INPUT") {
+	var text = e.target.innerText;
+	var input = $("<input>").attr("title", "Press Enter to save. Press Escape to abort.").keyup(saveDescription);
+	if (text) input.val(text);
+	$(e.target.parentElement).empty().append(input);
+	input.focus();
+    }
+});
+
+function saveDescription(e) {
+    if (e.key === "Enter") {
+	// Save description on photo
+	$.getJSON("/_save_description", {
+	    uuid: getPhotoId(),
+	    description: e.target.value
+	}, function (result) {
+	    var node = $("<span>").text(result["description"]);
+	    $(e.target.parentElement).empty().append(node);
+	});
+    } else if (e.key === "Escape") {
+	// Reload page
+	window.location.reload();
+    }
+}
+
 $("#view .date").click(function () {
     $.getJSON("/_get_metainfo", {
 	uuid: getPhotoId()
@@ -201,8 +227,8 @@ $("#config input.add").on("click", function (e) {
 
 $("#config input.remove").click(removeLocation);
 
-function removeLocation(event) {
-    $(event.target.parentElement).remove();
+function removeLocation(e) {
+    $(e.target.parentElement).remove();
     updateLocationRows();
 }
 

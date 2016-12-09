@@ -17,6 +17,7 @@ class Photo:
         self.ext = self.path[i:]
         self.uuid = str(uuid4()).replace("-", "")
         self.thumbnail = self.uuid + ".jpg"
+        self.description = ""
         self.camera = ""
         self.tags = []
 

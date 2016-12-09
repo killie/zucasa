@@ -365,6 +365,15 @@ def show_more():
     # Next index to show photos are now at index 'i'. Return its date.
     return jsonify({"date": photos[i].year + photos[i].month + photos[i].day})
 
+@app.route("/_save_description")
+def save_description():
+    uuid = request.args["uuid"]
+    description = request.args["description"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    photo.description = description
+    # TODO: Sync database
+    return jsonify({"description": description})
+
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""
     photos = []
