@@ -1,0 +1,12 @@
+# Python files
+*.py[cod]
+
+# Emacs files
+*~
+
+# Temp files on Zucasa server
+server/static/cache/
+server/static/import/
+
+# Ignore Zucasa database
+server/zucasa.db
