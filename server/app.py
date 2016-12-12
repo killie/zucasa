@@ -339,7 +339,16 @@ def get_metainfo():
     uuid = request.args["uuid"]
     photo = _find_photo_by_uuid(photo_list, uuid)
     metainfo = photo.load_metainfo()
-    return jsonify(metainfo)
+    return render_template("metainfo.html", metainfo=_sort_metainfo(metainfo))
+
+def _sort_metainfo(metainfo):
+    """Take metainfo map and put it into array with key, value, class."""
+    less = ["Image Size", "File Size", "File Type", "Directory", "File Name"]
+    array = []
+    for key in metainfo:
+        array.append({"key": key, "value": metainfo[key], "class": "less" if key in less else "more" })
+
+    return sorted(array, key=lambda d: d["key"])
 
 @app.route("/_show_more")
 def show_more():

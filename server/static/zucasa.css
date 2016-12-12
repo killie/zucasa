@@ -291,19 +291,17 @@ img.thumbnail:hover {
     bottom: 0;
     overflow: auto;
     margin: 0;
-    list-style: none;
-    padding-left: 1em;
+    padding: 1em;
     background-color: var(--dark-color);
     color: var(--light-color);
+    display: flex;
+    flex-direction: column;
+    border-right: medium solid var(--light-color);
 }
 
-#view .metainfo:hover {
-    cursor: pointer;
-}
-
-#view .metainfo li span:last-child {
+#view .metainfo tr td:first-child {
     font-weight: bold;
-    padding-left: 0.5em;
+    padding-right: 1em;
 }
 
 /* Config page */

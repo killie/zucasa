@@ -1,0 +1,11 @@
+<div class="metainfo">
+  <table>
+    {% for row in metainfo %}
+    <tr class="{{ row.class }}"><td>{{ row.key }}</td><td>{{ row.value }}</td></tr>
+    {% endfor %}
+  </table>
+  <div>
+    <input type="button" class="more" value="More">
+    <input type="button" class="close" value="Close">
+  </div>
+</div>

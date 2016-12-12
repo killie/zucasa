@@ -200,19 +200,19 @@ function saveDescription(e) {
 }
 
 $("#view .date").click(function () {
-    $.getJSON("/_get_metainfo", {
-	uuid: getPhotoId()
-    }, function (metainfo) {
-	var overlay = $("<ul>").attr("class", "metainfo");
-	for (var key in metainfo) {
-	    var row = $("<li>").append($("<span>").text(key + ":")).append($("<span>").text(metainfo[key]));
-	    overlay.append(row);
-	}
-	overlay.click(function () {
-	    $(this).remove();
+    function showMetaInfo(html) {
+	$("#view").append($(html));
+	$(".metainfo tr.more").toggle();
+	$(".metainfo input.more").click(function () {
+	    $(".metainfo tr.more").toggle();
+	    this.value = this.value === "More" ? "Less" : "More";
 	});
-	$("#view").append(overlay);
-    });
+	$(".metainfo input.close").click(function () {
+	    $(".metainfo").remove();
+	});
+    }
+
+    $.get("/_get_metainfo", {uuid: getPhotoId()}, showMetaInfo, "html");
 });
 
 // Clicking add and remove on locations in config page
