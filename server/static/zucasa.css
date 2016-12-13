@@ -91,6 +91,11 @@ body {
     display: none;
 }
 
+.dates > ul > li > ul > li > ul > li.collapsed:before, .dates > ul > li > ul > li > ul > li.expanded:before {
+    content: "\f133";
+    padding-right: 2px;
+}
+
 .dates li a {
     color: var(--light-color);
     text-decoration: none;
