@@ -218,8 +218,8 @@ $("#view .date").click(function () {
 // Clicking add and remove on locations in config page
 $("#config input.add").on("click", function (e) {
     var location = $("<div>").attr("class", "location");
-    location.append($("<input>").attr("type", "text").attr("title", "Absolute path on disk").css("margin-right", "3px"));
-    location.append($("<input>").attr("type", "text").attr("title", "Username. Use 'public' for shared photos.").css("margin-right", "3px"));
+    location.append($("<input>").attr("type", "text").attr("placeholder", "Path").attr("title", "Absolute path on disk").css("margin-right", "3px"));
+    location.append($("<input>").attr("type", "text").attr("placeholder", "User").attr("title", "Username. Use 'public' for shared photos.").css("margin-right", "3px"));
     location.append($("<input>").attr("type", "button").attr("class", "remove").val("Remove").click(removeLocation));
     $(".locations").append(location);
     updateLocationRows();

@@ -6,6 +6,11 @@
     src: url("/static/Lato/Lato-Regular.ttf") format("opentype");
 }
 
+@font-face {
+    font-family: Raleway;
+    src: url("/static/Raleway/Raleway-Regular.ttf") format("opentype");
+}
+
 /* Variables */
 
 body {
@@ -310,6 +315,10 @@ img.thumbnail:hover {
     margin: 0;
     width: 100vw;
     background-color: var(--dark-color);
+}
+
+#config p {
+    font-family: Raleway;
 }
 
 #config > div {

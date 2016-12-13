@@ -15,8 +15,8 @@
 	  <div class="locations">
 	    {% for location in config.locations.keys() %}
 	    <div class="location">
-	      <input type="text" title="Absolute path on disk" name="location{{ loop.index }}" value="{{ location }}">
-	      <input type="text" title="Username. Use 'public' for shared photos." name="user{{ loop.index }}" value="{{ config.locations[location] }}">
+	      <input type="text" placeholder="Path" title="Absolute path on disk" name="location{{ loop.index }}" value="{{ location }}" placeholder="Path">
+	      <input type="text" placeholder="User" title="Username. Use 'public' for shared photos." name="user{{ loop.index }}" value="{{ config.locations[location] }}">
 	      <input type="button" class="remove" value="Remove">
 	    </div>
 	    {% endfor %}
@@ -49,7 +49,7 @@
 	<input type="button" class="back" value="Back">
       </div>
     </div>
-    <script type="text/javascript" src="/static/zepto.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="/static/zucasa.js"></script>
   </body>
 </html>
