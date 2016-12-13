@@ -239,10 +239,12 @@ function updateLocationRows() {
     });
 }
 
-// Clicking cancel on config page goes to previous page
-$("#config .cancel").click(function (e) {
-    if (window.history.length) {
+// Clicking back on config page goes to previous page
+$("#config .back").click(function (e) {
+    if (window.history.length > 1) {
 	window.history.back();
+    } else {
+	window.location.href = window.location.origin;
     }
 });
 
