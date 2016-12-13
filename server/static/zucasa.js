@@ -8,9 +8,25 @@ window.onhashchange = function (e) {
     section = $(hash);
     if (section.length == 0) {
 	// Section was not found, load from server given date from hash
+	saveDatesSidebar();
 	loadPhotosFromDate(hash.substring(1));
     }
 };
+
+function saveDatesSidebar() {
+    // Collect all open years and months and store them in browser db
+    var expanded = {};
+    var sidebar = $("#main .sidebar");
+    sidebar.find(".dates > ul > li.expanded > a").each(function () {
+	var year = this.innerText;
+	expanded[year] = {};
+	$(this.nextElementSibling).find("> li.expanded > a").each(function () {
+	    var month = this.innerText;
+	    expanded[year][month] = true;
+	});
+    });
+    localStorage.setItem("expanded", JSON.stringify(expanded));
+}
 
 function loadPhotosFromDate(date) {
     var url = window.location.href;
@@ -216,7 +232,7 @@ $("#view .date").click(function () {
 });
 
 // Clicking add and remove on locations in config page
-$("#config input.add").on("click", function (e) {
+$("#config input.add").click(function (e) {
     var location = $("<div>").attr("class", "location");
     location.append($("<input>").attr("type", "text").attr("placeholder", "Path").attr("title", "Absolute path on disk").css("margin-right", "3px"));
     location.append($("<input>").attr("type", "text").attr("placeholder", "User").attr("title", "Username. Use 'public' for shared photos.").css("margin-right", "3px"));
@@ -281,10 +297,30 @@ function stopProgressTimer() {
     window.clearInterval(progressTimer);
 }
 
+function updateDatesSidebar(expanded) {
+    if (!expanded) return;
+    var sidebar = $("#main .sidebar");
+    sidebar.find(".dates > ul > li > a").each(function () {
+	var year = this.innerText;
+	if (expanded.hasOwnProperty(year)) {
+	    $(this.parentElement).addClass("expanded").removeClass("collapsed");
+	    $(this.nextElementSibling).find("> li > a").each(function () {
+		var month = this.innerText;
+		if (expanded[year].hasOwnProperty(month)) {
+		    $(this.parentElement).addClass("expanded").removeClass("collapsed");
+		}
+	    });
+	} else {
+	    $(this.parentElement).removeClass("expanded").addClass("collapsed");
+	}
+    });
+}
+
 // Code to run after page has been loaded
 $(function (e) {
-    // If showing main page put focus in scrollable page content
+    // If showing main page put focus in scrollable page content and update dates sidebar
     if ($("#main").length) {
+	updateDatesSidebar(JSON.parse(localStorage.getItem("expanded")));
 	$(".page-content").focus();
     }
 
