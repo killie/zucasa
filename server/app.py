@@ -343,7 +343,7 @@ def get_metainfo():
 
 def _sort_metainfo(metainfo):
     """Take metainfo map and put it into array with key, value, class."""
-    less = ["Image Size", "File Size", "File Type", "Directory", "File Name"]
+    less = ["Image Size", "File Size", "File Type", "Directory", "File Name", "Create Date"]
     array = []
     for key in metainfo:
         array.append({"key": key, "value": metainfo[key], "class": "less" if key in less else "more" })
