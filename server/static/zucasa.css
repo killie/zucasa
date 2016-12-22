@@ -318,7 +318,11 @@ img.thumbnail:hover {
     flex: 1;
 }
 
-#view .description:hover, #view .date:hover {
+#view .options .spacer:hover {
+    cursor: initial;
+}
+
+#view .description:hover {
     cursor: pointer;
 }
 
