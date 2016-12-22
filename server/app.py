@@ -410,6 +410,9 @@ def sort_asc(items):
 def sort_desc(items):
     return sorted(items, reverse=True) 
 
+def nice_date(date):
+    return str(date.day) + "-" + calendar.month_name[date.month][:3] + "-" + str(date.year)
+
 def relative_path(path):
     length = len(getcwd() + "/server/")
     return path[length:]
@@ -423,6 +426,7 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(month_name=get_month_name)
     app.jinja_env.globals.update(sort_asc=sort_asc)
     app.jinja_env.globals.update(sort_desc=sort_desc)
+    app.jinja_env.globals.update(nice_date=nice_date)
     app.jinja_env.globals.update(relative_path=relative_path)
 
     # Load photos from database, thumbnails are on disk

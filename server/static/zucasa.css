@@ -16,7 +16,7 @@
 body {
     --dark-color: #444;
     --light-color: lightgray;
-    --accent-color: royalblue;
+    --accent-color: dodgerblue;
     font-family: Lato;
 }
 
@@ -189,7 +189,7 @@ img.thumbnail {
 }
 
 img.thumbnail:hover {
-    border: 4px var(--light-color) solid;
+    border: 4px var(--accent-color) solid;
     cursor: pointer;
 }
 
@@ -227,7 +227,7 @@ img.thumbnail:hover {
 }
 
 #view nav div:hover {
-    color: var(--light-color);
+    color: var(--accent-color);
     cursor: pointer;
 }
 
@@ -247,16 +247,16 @@ img.thumbnail:hover {
 }
 
 #view .photo div {
-    color: transparent;
-}
-
-#view .photo div:hover {
     display: inline-block;
     color: var(--light-color);
     font-size: 3.5em;
-    cursor: pointer;
     padding-top: 40%;
     vertical-align: middle;
+}
+
+#view .photo div:hover {
+    color: var(--accent-color);
+    cursor: pointer;
 }
 
 #view .photo .prev {
@@ -266,7 +266,7 @@ img.thumbnail:hover {
 }
 
 #view .photo .zoom {
-    flex: 3 1 auto;
+    flex: 5 1 auto;
 }
 
 #view .photo .next {
@@ -291,10 +291,31 @@ img.thumbnail:hover {
 /* Options */
 
 #view .options {
-    background-color: white;
-    font-size: 1.8em;
-    padding: 0 0.2em;
-    color: var(--dark-color);
+    color: var(--light-color);
+    display: flex;
+}
+
+#view .options > div {
+    font-size: 1.4em;
+    padding: 0 0.3em;
+}
+
+#view .options > div:hover {
+    color: var(--accent-color);
+    cursor: pointer;
+}
+
+#view .options > div > i {
+    font-size: 1.4em;
+}
+
+#view .options > div > span {
+    font-size: 1.1em;
+    line-height: 1.4em;
+}
+
+#view .options .spacer {
+    flex: 1;
 }
 
 #view .description:hover, #view .date:hover {
@@ -312,7 +333,7 @@ img.thumbnail:hover {
     color: var(--light-color);
     display: flex;
     flex-direction: column;
-    border-right: medium solid var(--light-color);
+    border-right: medium solid var(--accent-color);
 }
 
 #view .metainfo tr td:first-child {
