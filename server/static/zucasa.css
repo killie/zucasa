@@ -198,6 +198,9 @@ img.thumbnail:hover {
 #view {
     margin: 0;
     background-color: var(--dark-color);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 /* Filmstrip */
@@ -205,7 +208,7 @@ img.thumbnail:hover {
 #view nav {
     display: flex;
     justify-content: center;
-    padding: 0.5em;
+    padding: 0.2em;
     background-color: white;
 }
 
@@ -228,7 +231,10 @@ img.thumbnail:hover {
     cursor: pointer;
 }
 
+/* Photo */
+
 #view .container {
+    flex: 1;
     margin: 5px;
 }
 
@@ -236,9 +242,8 @@ img.thumbnail:hover {
     background-position: center top;
     background-repeat: no-repeat;
     background-size: contain;
-    width: calc(100vw - 10px);
-    height: calc(100vh - 150px);
     display: flex;
+    height: 100%;
 }
 
 #view .photo div {
@@ -248,9 +253,8 @@ img.thumbnail:hover {
 #view .photo div:hover {
     display: inline-block;
     color: var(--light-color);
-    font-size: 80px;
+    font-size: 3.5em;
     cursor: pointer;
-    height: 40%;
     padding-top: 40%;
     vertical-align: middle;
 }
@@ -284,11 +288,13 @@ img.thumbnail:hover {
     text-align: center;
 }
 
-#view .date {
-    margin-left: 0.3em;
-    margin-top: -0.3em;
-    font-size: 2em;
-    color: var(--light-color);
+/* Options */
+
+#view .options {
+    background-color: white;
+    font-size: 1.8em;
+    padding: 0 0.2em;
+    color: var(--dark-color);
 }
 
 #view .description:hover, #view .date:hover {
