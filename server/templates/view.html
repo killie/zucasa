@@ -32,7 +32,8 @@
 	<i class="fa fa-info-circle"></i>
 	<span>{{ nice_date(photo.created) }}</span>
       </div>
-      <div class="star" title="Add/remove star"><i class="fa fa-star-o"></i></div>
+      <div class="star" title="Add/remove star">
+	<i class="fa {% if photo.starred %}fa-star{% else %}fa-star-o{% endif %}"></i></div>
       <div class="spacer"></div>
       <div class="remove" title="Remove photo"><i class="fa fa-trash"></i></div>
     </div>

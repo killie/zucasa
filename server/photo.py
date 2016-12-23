@@ -20,6 +20,7 @@ class Photo:
         self.description = ""
         self.camera = ""
         self.tags = []
+        self.starred = False
 
     def __repr__(self):
         return str(self.created)

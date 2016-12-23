@@ -26,11 +26,20 @@ photo_list = []
 # Photos in map grouped by year, month and day
 photo_map = {}
 
+# List of user names
 users = []
+
+# List of camera models
 cameras = []
+
+# List of dictionaries where key is tag name and value is a list of photos
 tags = []
 
+# How many photos to show on a page
 limit = 300
+
+# List of photos that have been removed. Kept between imports.
+removed = []
 
 
 # Routes
@@ -151,7 +160,12 @@ def _load_cameras(photos):
     return cameras
 
 def _load_tags(photos):
-    return ["starred"]
+    tags = ["starred"]
+    for photo in photos:
+        for tag in photo.tags:
+            if not tag in tags:
+                tags.append(tag)
+    return tags
 
 @app.route("/<user>/<year>/<month>/<day>/<uuid>")
 def view(user, year, month, day, uuid):
@@ -380,8 +394,24 @@ def save_description():
     description = request.args["description"]
     photo = _find_photo_by_uuid(photo_list, uuid)
     photo.description = description
-    # TODO: Sync database
+    _save_photos(photo_list)
     return jsonify({"description": description})
+
+def _save_photos(photos):
+    """Save database with existing photos."""
+    # TODO: Save on shutdown instead of on each modification?
+    db = shelve.open(db_file)
+    db["photos"] = photos
+    db.sync()
+    db.close()
+
+@app.route("/_toggle_star")
+def toggle_star():
+    uuid = request.args["uuid"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    photo.starred = not photo.starred
+    _save_photos(photo_list)
+    return jsonify({"starred": photo.starred})
 
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""

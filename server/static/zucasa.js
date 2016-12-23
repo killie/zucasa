@@ -231,6 +231,23 @@ $("#view .date").click(function () {
     $.get("/_get_metainfo", {uuid: getPhotoId()}, showMetaInfo, "html");
 });
 
+$("#view .star").click(function (e) {
+    var icon = e.currentTarget.firstElementChild;
+    $.getJSON("/_toggle_star", {
+	uuid: getPhotoId()
+    }, function (data) {
+	if (data.starred) {
+	    $(icon).addClass("fa-star").removeClass("fa-star-o");
+	} else {
+	    $(icon).addClass("fa-star-o").removeClass("fa-star");
+	}
+    });
+});
+
+$("#view .remove").click(function (e) {
+    console.debug("Remove", getPhotoId(), e); // and show next/previous photo
+});
+
 // Clicking add and remove on locations in config page
 $("#config input.add").click(function (e) {
     var location = $("<div>").attr("class", "location");
