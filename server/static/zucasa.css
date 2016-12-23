@@ -147,6 +147,14 @@ body {
     text-decoration: none;
 }
 
+.links a:hover {
+    color: var(--accent-color);
+}
+
+.links a:not(:first-child) {
+    margin-left: 0.4em;
+}
+
 /* Page content */
 
 #main .page-content {
@@ -403,6 +411,16 @@ img.thumbnail:hover {
 }
 
 /* Removed page */
+
+#removed h1 {
+    margin-bottom: 0;
+}
+
+#removed .back-container {
+    vertical-align: bottom;
+    padding-bottom: 5px;
+    padding-left: 1em;
+}
 
 #removed .container {
     display: flex;

@@ -7,9 +7,13 @@
     <title>Zucasa</title>
   </head>
   <body id="removed">
-    <h1>Removed photos</h1>
+    <table>
+      <tr>
+	<td><h1>Removed photos</h1></td>
+	<td class="back-container"><input type="button" class="back" value="Back"></td>
+      </tr>
+    </table>
     <p>Photos removed from gallery. Originals are kept untouched on disk.</p>
-    <p>Click 'Revert' button to load photo back into gallery.</p>
     <div class="container">
       {% for photo in removed %}
       <table class="photo">
@@ -20,7 +24,7 @@
 	  <td>Location: <span class="click-to-select">{{ photo.path }}</span></td>
 	</tr>
 	<tr><td>Removed: {{ nice_time(photo.removed) }}</td></tr>
-	<tr><td><input type="button" class="revert" value="Revert"></td></tr>
+	<tr><td><input type="button" class="revert" value="Revert" title="Load photo back into gallery"></td></tr>
       </table>
       {% endfor %}
     </div>

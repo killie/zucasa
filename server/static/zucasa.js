@@ -282,8 +282,8 @@ function updateLocationRows() {
     });
 }
 
-// Clicking back on config page goes to previous page
-$("#config .back").click(function (e) {
+// Clicking back goes to previous page
+$("input.back").click(function (e) {
     if (window.history.length > 1) {
 	window.history.back();
     } else {
