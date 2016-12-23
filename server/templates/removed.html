@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/zucasa.css">
+    <title>Zucasa</title>
+  </head>
+  <body id="removed">
+    <h1>Removed photos</h1>
+    <p>Photos removed from gallery. Originals are kept untouched on disk.</p>
+    <p>Click 'Revert' button to load photo back into gallery.</p>
+    <div class="container">
+      {% for photo in removed %}
+      <table class="photo">
+	<tr>
+	  <td rowspan="3">
+	    <img class="thumbnail" src="/{{ relative_path(photo.thumbnail) }}">
+	  </td>
+	  <td>Location: <span class="click-to-select">{{ photo.path }}</span></td>
+	</tr>
+	<tr><td>Removed: {{ nice_time(photo.removed) }}</td></tr>
+	<tr><td><input type="button" class="revert" value="Revert"></td></tr>
+      </table>
+      {% endfor %}
+    </div>
+    <script type="text/javascript" src="/static/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="/static/zucasa.js"></script>
+  </body>
+</html>

@@ -203,6 +203,11 @@ img.thumbnail:hover {
     height: 100vh;
 }
 
+.click-to-select {
+    -webkit-user-select: all;
+    -moz-user-select: all;
+}
+
 /* Filmstrip */
 
 #view nav {
@@ -353,7 +358,7 @@ img.thumbnail:hover {
     background-color: var(--dark-color);
 }
 
-#config p {
+#config p, #removed p {
     font-family: Raleway;
 }
 
@@ -395,4 +400,24 @@ img.thumbnail:hover {
 
 #config form > div:last-child {
     margin-top: 1em;
+}
+
+/* Removed page */
+
+#removed .container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#removed .photo {
+    margin-bottom: 0.5em;
+    padding-right: 1em;
+}
+
+#removed .photo:hover {
+    background-color: var(--light-color);
+}
+
+#removed img.thumbnail {
+    margin: 2px 0 -2px 0;
 }

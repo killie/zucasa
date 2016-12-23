@@ -38,9 +38,6 @@ tags = []
 # How many photos to show on a page
 limit = 300
 
-# List of photos that have been removed. Kept between imports.
-removed = []
-
 
 # Routes
 
@@ -108,7 +105,12 @@ def _filter_photos(args):
     for photo in photo_list:
         if not args["users"] or photo.user in args["users"]:
             if not args["cameras"] or photo.camera in args["cameras"]:
-                photos.append(photo)
+                if not args["tags"]:
+                    photos.append(photo)
+                else:
+                    if len(args["tags"]) == 1 and args["tags"][0] == "starred":
+                        if photo.starred:
+                            photos.append(photo)
 
     return photos
 
@@ -413,6 +415,38 @@ def toggle_star():
     _save_photos(photo_list)
     return jsonify({"starred": photo.starred})
 
+@app.route("/_remove_photo")
+def remove_photo():
+    global photo_list
+    uuid = request.args["uuid"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    photos = filter(lambda p: p.uuid != uuid, photo_list)
+    # Put path on removed list
+    db = shelve.open(db_file)
+    if "removed" in db:
+        removed = db["removed"]
+    else:
+        removed = []
+    removed.append({"removed": datetime.now(), "path": photo.path, "thumbnail": photo.thumbnail})
+    db["removed"] = removed
+    # Remove photo from database. Original is not touched.
+    db["photos"] = photos
+    db.sync()
+    db.close()
+    photo_list = photos
+    return jsonify({"success": True})
+
+@app.route("/removed")
+def removed():
+    db = shelve.open(db_file)
+    if "removed" in db:
+        removed = db["removed"]
+    else:
+        removed = []
+    db.close()
+    # TODO: Show thumbnail of removed photo so it's easy to revert correct photo
+    return render_template("removed.html", removed=sorted(removed, key=lambda p: p["removed"], reverse=True))
+
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""
     photos = []
@@ -443,6 +477,9 @@ def sort_desc(items):
 def nice_date(date):
     return str(date.day) + "-" + calendar.month_name[date.month][:3] + "-" + str(date.year)
 
+def nice_time(date):
+    return nice_date(date) + date.strftime(" %H:%M")
+
 def relative_path(path):
     length = len(getcwd() + "/server/")
     return path[length:]
@@ -457,6 +494,7 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(sort_asc=sort_asc)
     app.jinja_env.globals.update(sort_desc=sort_desc)
     app.jinja_env.globals.update(nice_date=nice_date)
+    app.jinja_env.globals.update(nice_time=nice_time)
     app.jinja_env.globals.update(relative_path=relative_path)
 
     # Load photos from database, thumbnails are on disk

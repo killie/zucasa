@@ -245,7 +245,17 @@ $("#view .star").click(function (e) {
 });
 
 $("#view .remove").click(function (e) {
-    console.debug("Remove", getPhotoId(), e); // and show next/previous photo
+    $.getJSON("/_remove_photo", {
+	uuid: getPhotoId()
+    }, function (data) {
+	// Open thumbnail 4 or 2 if not exists then return to main
+	var thumbnails = $("img.thumbnail");
+	if (thumbnails.length > 1) {
+	    console.debug("Show another photo");
+	} else {
+	    console.debug("Go to main page");
+	}
+    });
 });
 
 // Clicking add and remove on locations in config page
