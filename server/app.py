@@ -178,7 +178,7 @@ def view(user, year, month, day, uuid):
     if not photo:
         return "This is not a photograph"
 
-    photo.load_photo()
+    photo.load_preview()
 
     # Find photo in photo list to add surrounding thumbnails
     items = _get_photos(photos, photo, -3) + [photo] + _get_photos(photos, photo, 3)
@@ -209,6 +209,13 @@ def _get_photos(photos, photo, count):
                     items.append(asc[j + i])
 
     return items
+
+@app.route("/_show_photo")
+def show_photo():
+    uuid = request.args["uuid"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    photo.load_photo()
+    return jsonify({"src": relative_path(photo.cache)})
 
 @app.route("/config", methods=["GET"])
 def get_config():

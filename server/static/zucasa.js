@@ -128,9 +128,11 @@ $(".show-more").click(function (e) {
 
 // Show original when clicking zoom on photo
 $(".photo .zoom").click(function (e) {
-    var src = $(e.target.parentElement).css("background-image");
-    src = src.replace('url("', '').replace('")', '');
-    window.location.href = src;
+    $.getJSON("/_show_photo", {
+	uuid: getPhotoId()
+    }, function (data) {
+	window.location.href = "/" + data.src;
+    });
 });
 
 // Show prev photo when clicking < on photo

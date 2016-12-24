@@ -12,6 +12,7 @@ def delete_files():
 
 def _delete_directories():
     _delete_directory(os.getcwd() + "/server/static/import")
+    _delete_directory(os.getcwd() + "/server/static/preview")
     _delete_directory(os.getcwd() + "/server/static/cache")
 
 def _delete_directory(directory):

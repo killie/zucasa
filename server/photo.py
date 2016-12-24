@@ -38,6 +38,10 @@ class Photo:
             if "Camera Model Name" in metainfo:
                 self.camera = metainfo["Camera Model Name"]
 
+            if "Image Height" in metainfo and "Image Width" in metainfo:
+                self.height = int(metainfo["Image Height"])
+                self.width = int(metainfo["Image Width"])
+
         if not date_string:
             self.created = False
             return
@@ -128,5 +132,46 @@ class Photo:
         directory = os.getcwd() + "/server/static/cache"
         if not os.path.exists(directory):
             os.makedirs(directory)
-        self.cache = directory + "/" + self.user + self.year + self.month + self.day + self.uuid + self.ext
+        self.cache = directory + "/" + self._get_temp_filename(self.ext)
         subprocess.check_output(["cp", self.path, self.cache])
+
+    def _get_temp_filename(self, ext):
+        return self.user + self.year + self.month + self.day + self.uuid + ext
+
+    def load_preview(self):
+        # Create preview directory
+        directory = os.getcwd() + "/server/static/preview"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # See if preview file already exists
+        self.preview = directory + "/" + self._get_temp_filename(".jpg")
+        if os.path.isfile(self.preview):
+            return
+
+        # Convert original to a smaller size with lower quality
+        command = ["convert", self.path, "-format", "'jpg'", "-density", "72x72", "-quality", "50"]
+        command = self._add_resize_args(command)
+        if self.rotation > 0:
+            command.append("-rotate")
+            command.append(str(self.rotation))
+
+        command.append(self.preview)
+        subprocess.check_output(command)
+
+    def _add_resize_args(self, command):
+        if self.height > 1000 or self.width > 2000:
+            # Resize width and height while maintaining ratio
+            width = self.width / 2
+            height = self.height / 2
+        else:
+            width = self.width
+            height = self.height
+
+        command.append("-resize")
+        if self.rotation > 0:
+            command.append(str(height) + "x" + str(width))
+        else:
+            command.append(str(width) + "x" + str(height))
+
+        return command
