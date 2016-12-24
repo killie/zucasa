@@ -360,4 +360,14 @@ $(function (e) {
 	var title = [parts[i - 2], parts[i - 1], parts[i]].join("-");
 	$(this).attr("title", title);
     });
+
+    $(document).keypress(function (e) {
+	if ($("body#view").length > 0) {
+	    if (e.originalEvent.key === "ArrowLeft") {
+		openThumbnail(getThumbnailUrl(2));
+	    } else if (e.originalEvent.key === "ArrowRight") {
+		openThumbnail(getThumbnailUrl(4));
+	    }
+	}
+    });
 });
