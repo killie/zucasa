@@ -213,7 +213,26 @@ def _get_photos(photos, photo, count):
 @app.route("/_show_photo")
 def show_photo():
     uuid = request.args["uuid"]
-    photo = _find_photo_by_uuid(photo_list, uuid)
+    photo = None
+    if "source" in request.args:
+        if request.args["source"] == "removed":
+            db = shelve.open(db_file)
+            if "removed" in db:
+                removed = db["removed"]
+            else:
+                removed = []
+
+            for r in removed:
+                if r["photo"].uuid == uuid:
+                    photo = r["photo"]
+                    break
+
+            db.close()
+        else:
+            return jsonify({"success": False})
+    else:
+        photo = _find_photo_by_uuid(photo_list, uuid)
+
     photo.load_photo()
     return jsonify({"src": relative_path(photo.cache)})
 

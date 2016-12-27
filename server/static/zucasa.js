@@ -49,7 +49,7 @@ $(".sidebar li a").click(function (e) {
 });
 
 // Open photo when clicking thumbnail
-$("img.thumbnail").click(showThumbnail);
+$("#main img.thumbnail, #view img.thumbnail").click(showThumbnail);
 
 function showThumbnail(event) {
     // Remember hash on main location for 30 minutes, for use when pressing close from view page
@@ -127,13 +127,15 @@ $(".show-more").click(function (e) {
 });
 
 // Show original when clicking zoom on photo
-$(".photo .zoom").click(function (e) {
-    $.getJSON("/_show_photo", {
-	uuid: getPhotoId()
-    }, function (data) {
+$(".photo .zoom").click(showPhoto);
+
+function showPhoto(uuid, source) {
+    var args = {uuid: uuid || getPhotoId()};
+    if (source) args["source"] = source;
+    $.getJSON("/_show_photo", args, function (data) {
 	window.location.href = "/" + data.src;
     });
-});
+}
 
 // Show prev photo when clicking < on photo
 $(".photo .prev").click(function (e) {
@@ -260,6 +262,7 @@ $("#view .remove").click(function (e) {
     });
 });
 
+// Clicking recover on removed photo adds photo back into gallery
 $("#removed .recover").click(function (e) {
     var table = $(e.currentTarget).closest("table");
     $.getJSON("/_recover_photo", {
@@ -271,6 +274,12 @@ $("#removed .recover").click(function (e) {
 	    console.warn(data.message || "Could not recover photo");
 	}
     });
+});
+
+// Clicking on removed thumbnail shows original directly
+$("#removed img.thumbnail").click(function (e) {
+    var table = $(e.currentTarget).closest("table");
+    showPhoto(table.attr("id"), "removed");
 });
 
 // Clicking add and remove on locations in config page
