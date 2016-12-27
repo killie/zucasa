@@ -434,7 +434,7 @@ def remove_photo():
         removed = db["removed"]
     else:
         removed = []
-    removed.append({"removed": datetime.now(), "path": photo.path, "thumbnail": photo.thumbnail})
+    removed.append({"removed": datetime.now(), "photo": photo})
     db["removed"] = removed
     # Remove photo from database. Original is not touched.
     db["photos"] = photos
@@ -451,8 +451,39 @@ def removed():
     else:
         removed = []
     db.close()
-    # TODO: Show thumbnail of removed photo so it's easy to revert correct photo
     return render_template("removed.html", removed=sorted(removed, key=lambda p: p["removed"], reverse=True))
+
+@app.route("/_recover_photo")
+def recover_photo():
+    global photo_list
+    uuid = request.args["uuid"]
+    # Find photo in list of removed photos
+    db = shelve.open(db_file)
+    if "removed" in db:
+        removed = db["removed"]
+    else:
+        db.close()
+        return jsonify({"success": False, "message": "Could not find photo in list of removed photos"})
+
+    # Add photo to photo list
+    found = False
+    for r in removed:
+        photo = r["photo"]
+        if photo.uuid == uuid:
+            photo_list.append(photo)
+            photo_list = sorted(photo_list, key=lambda p: p.created, reverse=True)
+            found = True
+
+    if not found:
+        db.close()
+        return jsonify({"success": False, "message": "Could not find photo in list of removed photos"})
+
+    # Remove photo from list of removed photos and sync db
+    db["removed"] = filter(lambda r: r["photo"].uuid != uuid, removed)
+    db["photos"] = photo_list
+    db.sync()
+    db.close()
+    return jsonify({"success": True})
 
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""

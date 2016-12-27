@@ -260,6 +260,19 @@ $("#view .remove").click(function (e) {
     });
 });
 
+$("#removed .recover").click(function (e) {
+    var table = $(e.currentTarget).closest("table");
+    $.getJSON("/_recover_photo", {
+	uuid: table.attr("id")
+    }, function (data) {
+	if (data.success) {
+	    table.remove();
+	} else {
+	    console.warn(data.message || "Could not recover photo");
+	}
+    });
+});
+
 // Clicking add and remove on locations in config page
 $("#config input.add").click(function (e) {
     var location = $("<div>").attr("class", "location");
