@@ -6,9 +6,18 @@
     <link rel="stylesheet" href="/static/zucasa.css">
     <title>Zucasa</title>
   </head>
-  <body id="config">
-    <div>
-      <form action="config" method="post">
+  <body id="settings">
+    <nav>
+      <ul>
+	<li class="import selected" title="Load photos into gallery">Import</li>
+	<li class="prefs">Preferences</li>
+	<li class="removed" title="Photos removed from gallery">Removed</li>
+	<li class="tags">Tags</li>
+      </ul>
+      <input type="button" class="back" value="Back">
+    </nav>
+    <div class="container">
+      <form class="import" action="import" method="post">
 	<div>
 	  <h1>Locations</h1>
 	  <p>Where to load photos from disk.</p>
@@ -33,21 +42,16 @@
 	  <input type="submit" class="import" value="Import">
 	</div>
       </form>
-      <form action="settings" method="post">
+      <form class="prefs" action="prefs" method="post" hidden>
 	<div>
 	  <h1>Page break</h1>
 	  <p>How much to display at a time.</p>
 	  <input type="number" name="limit" value="{{ config.limit }}"> <span>photos</span>
 	</div>
 	<div>
-	  <p>Clicking save does not result in new import.</p>
 	  <input type="submit" class="save" value="Save">
 	</div>
       </form>
-      <div>
-	<p>Click back to return to front page.</p>
-	<input type="button" class="back" value="Back">
-      </div>
     </div>
     <script type="text/javascript" src="/static/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="/static/zucasa.js"></script>

@@ -151,10 +151,6 @@ body {
     color: var(--accent-color);
 }
 
-.links a:not(:first-child) {
-    margin-left: 0.4em;
-}
-
 /* Page content */
 
 #main .page-content {
@@ -358,55 +354,73 @@ img.thumbnail:hover {
     padding-right: 1em;
 }
 
-/* Config page */
+/* Settings page */
 
-#config {
+#settings {
     margin: 0;
     width: 100vw;
-    background-color: var(--dark-color);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
 }
 
-#config p, #removed p {
+#settings p, #removed p {
     font-family: Raleway;
 }
 
-#config > div {
-    position: absolute;
-    left: 30%;
-    width: 70%;
-    height: 100%;
-    background-color: white;
+#settings nav {
+    background-color: var(--dark-color);
+    color: var(--light-color);
 }
 
-#config form {
-    padding-top: 2em;
+#settings nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 1em 0;
 }
 
-#config form > div, #config > div > div {
-    margin-left: 1em;
+#settings nav li {
+    padding: 0.2em 2em 0.2em 1em;
 }
 
-#config .location input:nth-child(1) {
+#settings nav li.selected {
+    background-color: var(--accent-color);
+}
+
+#settings nav li:hover {
+    cursor: pointer;
+    background-color: var(--accent-color);
+}
+
+#settings nav .back {
+    margin: 1em;
+}
+
+#settings .container {
+    margin: 0 1em;
+}
+
+#settings .location input:nth-child(1) {
     width: 30em;
 }
 
-#config .location input:nth-child(2) {
+#settings .location input:nth-child(2) {
     width: 8em;
 }
 
-#config .location {
+#settings .location {
     padding-bottom: 0.5em;
 }
 
-#config input[type=number] {
+#settings input[type=number] {
     width: 5em;
 }
 
-#config form > div {
+#settings form > div {
     padding-bottom: 1.5em;
 }
 
-#config form > div:last-child {
+#settings form > div:last-child {
     margin-top: 1em;
 }
 

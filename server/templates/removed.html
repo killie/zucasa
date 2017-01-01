@@ -1,34 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/zucasa.css">
-    <title>Zucasa</title>
-  </head>
-  <body id="removed">
-    <table>
+<div id="removed">
+  <h1>Removed photos</h1>
+  <p>Photos removed from gallery. Originals are kept untouched on disk.</p>
+  <div class="container">
+    {% for r in removed %}
+    <table class="photo" id="{{ r.photo.uuid }}">
       <tr>
-	<td><h1>Removed photos</h1></td>
-	<td class="back-container"><input type="button" class="back" value="Back"></td>
+	<td rowspan="3">
+	  <img class="thumbnail" src="/{{ relative_path(r.photo.thumbnail) }}">
+	</td>
+	<td>Location: <span class="click-to-select">{{ r.photo.path }}</span></td>
       </tr>
+      <tr><td>Removed: {{ nice_time(r.removed) }}</td></tr>
+      <tr><td><input type="button" class="recover" value="Recover" title="Load photo back into gallery"></td></tr>
     </table>
-    <p>Photos removed from gallery. Originals are kept untouched on disk.</p>
-    <div class="container">
-      {% for r in removed %}
-      <table class="photo" id="{{ r.photo.uuid }}">
-	<tr>
-	  <td rowspan="3">
-	    <img class="thumbnail" src="/{{ relative_path(r.photo.thumbnail) }}">
-	  </td>
-	  <td>Location: <span class="click-to-select">{{ r.photo.path }}</span></td>
-	</tr>
-	<tr><td>Removed: {{ nice_time(r.removed) }}</td></tr>
-	<tr><td><input type="button" class="recover" value="Recover" title="Load photo back into gallery"></td></tr>
-      </table>
-      {% endfor %}
-    </div>
-    <script type="text/javascript" src="/static/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="/static/zucasa.js"></script>
-  </body>
-</html>
+    {% endfor %}
+  </div>
+</div>

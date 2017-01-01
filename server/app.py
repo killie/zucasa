@@ -236,17 +236,17 @@ def show_photo():
     photo.load_photo()
     return jsonify({"src": relative_path(photo.cache)})
 
-@app.route("/config", methods=["GET"])
-def get_config():
-    return _show_config()
+@app.route("/settings", methods=["GET"])
+def get_settings():
+    return _show_settings()
 
-def _show_config():
+def _show_settings():
     config = Config()
     config.load(rc_file)
-    return render_template("config.html", config=config)
+    return render_template("settings.html", config=config)
 
-@app.route("/config", methods=["POST"])
-def post_config():
+@app.route("/import", methods=["POST"])
+def post_import():
     global photo_list, photo_map, users, cameras, tags, limit
     photo_list = []
     photo_map = {}
@@ -327,8 +327,8 @@ def _sync_db():
     db.sync()
     db.close()
 
-@app.route("/settings", methods=["POST"])
-def post_settings():
+@app.route("/prefs", methods=["POST"])
+def post_prefs():
     global limit
     limit = request.form["limit"]
     config = Config()
@@ -462,7 +462,7 @@ def remove_photo():
     photo_list = photos
     return jsonify({"success": True})
 
-@app.route("/removed")
+@app.route("/_get_removed")
 def removed():
     db = shelve.open(db_file)
     if "removed" in db:

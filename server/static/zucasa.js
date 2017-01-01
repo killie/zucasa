@@ -282,8 +282,32 @@ $("#removed img.thumbnail").click(function (e) {
     showPhoto(table.attr("id"), "removed");
 });
 
-// Clicking add and remove on locations in config page
-$("#config input.add").click(function (e) {
+// Clicking import or settings toggles form
+$("#settings nav .import, #settings nav .prefs").click(function (e) {
+    $("#settings nav li").removeClass("selected");
+    $("#settings .container form").hide();
+    var li = $(e.currentTarget);
+    li.addClass("selected");
+    if (li.hasClass("import")) {
+	$("#settings .container .import").show();
+    } else if (li.hasClass("prefs")) {
+	$("#settings .container .prefs").show();
+    }
+});
+
+// Clicking removed photos on settings page
+$("#settings nav .removed").click(function () {
+    function showRemoved(html) {
+	$("#settings .container").empty().append($(html));
+    }
+
+    $("#settings nav li").removeClass("selected");
+    $("#settings nav li.removed").addClass("selected");
+    $.get("/_get_removed", {}, showRemoved, "html");
+});
+
+// Clicking add and remove on locations in settings page
+$("#settings input.add").click(function (e) {
     var location = $("<div>").attr("class", "location");
     location.append($("<input>").attr("type", "text").attr("placeholder", "Path").attr("title", "Absolute path on disk").css("margin-right", "3px"));
     location.append($("<input>").attr("type", "text").attr("placeholder", "User").attr("title", "Username. Use 'public' for shared photos.").css("margin-right", "3px"));
@@ -292,7 +316,7 @@ $("#config input.add").click(function (e) {
     updateLocationRows();
 });
 
-$("#config input.remove").click(removeLocation);
+$("#settings input.remove").click(removeLocation);
 
 function removeLocation(e) {
     $(e.target.parentElement).remove();
@@ -300,7 +324,7 @@ function removeLocation(e) {
 }
 
 function updateLocationRows() {
-    $("#config .location").each(function (index, row) {
+    $("#settings .location").each(function (index, row) {
 	$(row).find("input").eq(0).attr("name", "location" + Number(index + 1));
 	$(row).find("input").eq(1).attr("name", "user" + Number(index + 1));
     });
