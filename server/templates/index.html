@@ -32,26 +32,6 @@
             {% endfor %}
 	  </ul>
 	</div>
-	<div class="filters">
-	  <div class="header">Users</div>
-	  <div class="users">
-	    {% for user in sort_asc(users.keys()) %}
-	    <div{% if users[user] == True %} class="selected"{% endif %}>{{ user }}</div>
-	    {% endfor %}
-	  </div>
-	  <div class="header">Cameras</div>
-	  <div class="cameras">
-	    {% for camera in sort_asc(cameras.keys()) %}
-	    <div{% if cameras[camera] == True %} class="selected"{% endif %}>{{ camera }}</div>
-	    {% endfor %}
-	  </div>
-	  <div class="header">Tags</div>
-	  <div class="tags">
-	    {% for tag in sort_asc(tags.keys()) %}
-	    <div{% if tags[tag] == True %} class="selected"{% endif %}>{{ tag }}</div>
-	    {% endfor %}
-	  </div>
-	</div>
 	<div class="links">
 	  <a href="/settings"><i class="fa fa-cog"></i> Settings</a>
 	</div>
@@ -76,6 +56,28 @@
 	<div class="show-more"><span>Show older</span></div>
 	{% endif %}
       </div>
+      <nav class="sidebar">
+	<div class="filters">
+	  <div class="header">Users</div>
+	  <div class="users">
+	    {% for user in sort_asc(users.keys()) %}
+	    <div{% if users[user] == True %} class="selected"{% endif %}>{{ user }}</div>
+	    {% endfor %}
+	  </div>
+	  <div class="header">Cameras</div>
+	  <div class="cameras">
+	    {% for camera in sort_asc(cameras.keys()) %}
+	    <div{% if cameras[camera] == True %} class="selected"{% endif %}>{{ camera }}</div>
+	    {% endfor %}
+	  </div>
+	  <div class="header">Tags</div>
+	  <div class="tags">
+	    {% for tag in sort_asc(tags.keys()) %}
+	    <div{% if tags[tag] == True %} class="selected"{% endif %}>{{ tag }}</div>
+	    {% endfor %}
+	  </div>
+	</div>
+      </nav>
     </div>
     <script type="text/javascript" src="/static/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="/static/zucasa.js"></script>
