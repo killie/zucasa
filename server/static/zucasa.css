@@ -132,7 +132,7 @@ body {
 
 .users > div.selected, .cameras > div.selected, .tags > div.selected {
     background-color: var(--accent-color);
-    color: var(--light-color);
+    color: white;
     border-radius: 5px;
 }
 
