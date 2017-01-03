@@ -59,8 +59,19 @@ function showThumbnail(event) {
     openThumbnail(event.target.src);
 }
 
-function getThumbnailUrl(index) {
-    return $("img.thumbnail").eq(index).attr("src");
+function getThumbnailUrl(direction) {
+    var count = $("img.thumbnail").length, index = 0;
+    if (count % 2 === 0) {
+	console.debug("We have a problem");
+    } else if (count % 2 === 1) {
+	if (count >= 3) {
+	    index = ((count - 1) / 2) + direction;
+	    return $("img.thumbnail").eq(index).attr("src");
+	} else {
+	    console.debug("Which way do we go?");
+	}
+    }
+    return "";
 }
 
 function openThumbnail(url) {
@@ -139,12 +150,12 @@ function showPhoto(uuid, source) {
 
 // Show prev photo when clicking < on photo
 $(".photo .prev").click(function (e) {
-    openThumbnail(getThumbnailUrl(2));
+    openThumbnail(getThumbnailUrl(-1));
 });
 
 // Show next photo when clicking > on photo
 $(".photo .next").click(function (e) {
-    openThumbnail(getThumbnailUrl(4));
+    openThumbnail(getThumbnailUrl(1));
 });
 
 // Scroll thumbnails while looking at a photo
@@ -252,10 +263,10 @@ $("#view .remove").click(function (e) {
     $.getJSON("/_remove_photo", {
 	uuid: getPhotoId()
     }, function (data) {
-	// Open thumbnail 4 or 2 if not exists then return to main
+	// Open next or prev thumbnail, if not exists then return to main
 	var thumbnails = $("img.thumbnail");
 	if (thumbnails.length > 1) {
-	    console.debug("Show another photo");
+	    openThumbnail(getThumbnailUrl(1));
 	} else {
 	    console.debug("Go to main page");
 	}
@@ -263,7 +274,7 @@ $("#view .remove").click(function (e) {
 });
 
 // Clicking recover on removed photo adds photo back into gallery
-$("#removed .recover").click(function (e) {
+function recoverPhoto(e) {
     var table = $(e.currentTarget).closest("table");
     $.getJSON("/_recover_photo", {
 	uuid: table.attr("id")
@@ -274,13 +285,13 @@ $("#removed .recover").click(function (e) {
 	    console.warn(data.message || "Could not recover photo");
 	}
     });
-});
+}
 
 // Clicking on removed thumbnail shows original directly
-$("#removed img.thumbnail").click(function (e) {
+function viewRemovedPhoto(e) {
     var table = $(e.currentTarget).closest("table");
     showPhoto(table.attr("id"), "removed");
-});
+}
 
 // Clicking import or settings toggles form
 $("#settings nav .import, #settings nav .prefs").click(function (e) {
@@ -304,6 +315,8 @@ function emptySettingsPage() {
 $("#settings nav .removed").click(function () {
     function showRemoved(html) {
 	$("#settings .container").append($(html));
+	$("#removed .recover").click(recoverPhoto);
+	$("#removed img.thumbnail").click(viewRemovedPhoto);
     }
 
     $("#settings nav li").removeClass("selected");
@@ -416,9 +429,9 @@ $(function (e) {
     $(document).keypress(function (e) {
 	if ($("body#view").length > 0) {
 	    if (e.originalEvent.key === "ArrowLeft") {
-		openThumbnail(getThumbnailUrl(2));
+		openThumbnail(getThumbnailUrl(-1));
 	    } else if (e.originalEvent.key === "ArrowRight") {
-		openThumbnail(getThumbnailUrl(4));
+		openThumbnail(getThumbnailUrl(1));
 	    }
 	}
     });
