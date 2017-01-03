@@ -204,12 +204,12 @@ $("#view .close").click(function (e) {
     window.location.href = url;
 });
 
-$("#view .description").click(function (e) {
+$("#view .edit-description, #view .description").click(function (e) {
     if (e.target.nodeName !== "INPUT") {
-	var text = e.target.innerText;
+	var text = $("#view .description").text();
 	var input = $("<input>").attr("title", "Press Enter to save. Press Escape to abort.").keyup(saveDescription);
 	if (text) input.val(text);
-	$(e.target.parentElement).empty().append(input);
+	$("#view .description").empty().append(input);
 	input.focus();
     }
 });

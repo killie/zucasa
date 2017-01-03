@@ -25,14 +25,19 @@
 	  <i class="fa fa-chevron-right"></i>
 	</div>
       </div>
-      <div class="description">{% if photo.description %}{{ photo.description }}{% else %}<i class="fa fa-commenting"></i>{% endif %}</div>
+      <div class="description" title="Edit description">
+	{% if photo.description %}<span>{{ photo.description }}</span>{% endif %}
+      </div>
     </div>
     <div class="options">
       <div class="date" title="Show metainfo">
 	<span>{{ nice_date(photo.created) }}</span>
       </div>
       <div class="star" title="Add/remove star">
-	<i class="fa {% if photo.starred %}fa-star{% else %}fa-star-o{% endif %}"></i></div>
+	<i class="fa {% if photo.starred %}fa-star{% else %}fa-star-o{% endif %}"></i>
+      </div>
+      <div class="edit-description" title="Edit description">
+	<i class="fa {% if photo.description %}fa-commenting{% else %}fa-comment-o{% endif %}"></i></div>
       <div class="spacer"></div>
       <div class="remove" title="Remove photo"><i class="fa fa-trash"></i></div>
     </div>

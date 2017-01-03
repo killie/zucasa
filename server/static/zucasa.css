@@ -287,9 +287,15 @@ img.thumbnail:hover {
 #view .description {
     text-align: center;
     font-size: 2em;
-    color: var(--light-color);
     margin-top: -4em;
     line-height: 4em;
+}
+
+#view .description span {
+    color: white;
+    background-color: #222;
+    padding: 0.2em 0.4em;
+    opacity: 0.6;
 }
 
 #view .description > input {
