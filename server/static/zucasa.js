@@ -285,9 +285,9 @@ $("#removed img.thumbnail").click(function (e) {
 // Clicking import or settings toggles form
 $("#settings nav .import, #settings nav .prefs").click(function (e) {
     $("#settings nav li").removeClass("selected");
-    $("#settings .container form").hide();
     var li = $(e.currentTarget);
     li.addClass("selected");
+    emptySettingsPage();
     if (li.hasClass("import")) {
 	$("#settings .container .import").show();
     } else if (li.hasClass("prefs")) {
@@ -295,14 +295,20 @@ $("#settings nav .import, #settings nav .prefs").click(function (e) {
     }
 });
 
+function emptySettingsPage() {
+    $("#settings .container > form").hide();
+    $("#settings .container > div").remove();
+}
+
 // Clicking removed photos on settings page
 $("#settings nav .removed").click(function () {
     function showRemoved(html) {
-	$("#settings .container").empty().append($(html));
+	$("#settings .container").append($(html));
     }
 
     $("#settings nav li").removeClass("selected");
     $("#settings nav li.removed").addClass("selected");
+    emptySettingsPage();
     $.get("/_get_removed", {}, showRemoved, "html");
 });
 

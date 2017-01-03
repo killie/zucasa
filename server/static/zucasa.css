@@ -384,6 +384,7 @@ img.thumbnail:hover {
 }
 
 #settings nav li.selected {
+    color: white;
     background-color: var(--accent-color);
 }
 
