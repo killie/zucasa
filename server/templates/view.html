@@ -9,8 +9,8 @@
   <body id="view">
     <nav class="filmstrip">
       <div class="back3"><i class="fa fa-chevron-left"></i></div>
-      {% for thumbnail in thumbnails %}
-      <img class="thumbnail" src="/{{ relative_path(thumbnail) }}">
+      {% for uuid, thumbnail in thumbnails %}
+      <img class="thumbnail" id="{{ uuid }}" src="/{{ relative_path(thumbnail) }}">
       {% endfor %}
       <div class="forward3"><i class="fa fa-chevron-right"></i></div>
       <div class="close"><i class="fa fa-reply"></i></div>

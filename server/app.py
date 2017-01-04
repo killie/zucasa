@@ -182,7 +182,7 @@ def view(user, year, month, day, uuid):
 
     # Find photo in photo list to add surrounding thumbnails
     items = _get_photos(photos, photo, -3) + [photo] + _get_photos(photos, photo, 3)
-    thumbnails = map(lambda p: p.thumbnail, items)
+    thumbnails = map(lambda p: [p.uuid, p.thumbnail], items)
 
     return render_template("view.html", photo=photo, thumbnails=thumbnails)
 

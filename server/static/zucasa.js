@@ -60,21 +60,19 @@ function showThumbnail(event) {
 }
 
 function getThumbnailUrl(direction) {
-    var count = $("img.thumbnail").length, index = 0;
-    if (count % 2 === 0) {
-	console.debug("We have a problem");
-    } else if (count % 2 === 1) {
-	if (count >= 3) {
-	    index = ((count - 1) / 2) + direction;
-	    return $("img.thumbnail").eq(index).attr("src");
-	} else {
-	    console.debug("Which way do we go?");
+    var thumbnails = $("img.thumbnail"), uuid = getPhotoId(), thumbnail;
+    for (var i = 0; i < thumbnails.length; i++) {
+	if ($(thumbnails[i]).attr("id") === uuid) {
+	    if ($(thumbnails[i + direction])) {
+		return $(thumbnails[i + direction]).attr("src");
+	    }
 	}
     }
     return "";
 }
 
 function openThumbnail(url) {
+    if (!url) return;
     // Remove extension, but it can be more than 3 chars
     var href = url.substring(0, url.length - 4);
     var s = href.replace("/static/import/photos", "") + window.location.search;
