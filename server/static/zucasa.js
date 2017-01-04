@@ -138,7 +138,9 @@ $(".show-more").click(function (e) {
 });
 
 // Show original when clicking zoom on photo
-$(".photo .zoom").click(showPhoto);
+$(".photo .zoom").click(function (e) {
+    showPhoto();
+});
 
 function showPhoto(uuid, source) {
     var args = {uuid: uuid || getPhotoId()};
