@@ -185,9 +185,7 @@ $("#view .forward3, #view .back3").click(function (e) {
 });
 
 function getPhotoId() {
-    var filmstrip = $("#view .filmstrip");
-    var thumbnail = filmstrip.find("img.thumbnail").eq(3);
-    return getIdFromThumbnail(thumbnail);
+    return $("div.photo").attr("id");
 }
 
 function getIdFromThumbnail(thumbnail) {
