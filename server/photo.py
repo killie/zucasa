@@ -21,6 +21,7 @@ class Photo:
         self.camera = ""
         self.tags = []
         self.starred = False
+        self.duplicate = False
 
     def __repr__(self):
         return str(self.created)

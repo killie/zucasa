@@ -516,6 +516,43 @@ def _load_photos():
 def _group_photos(photos):
     return group_photos(photos)
 
+def _remove_duplicates(photos):
+    duplicates = _find_duplicates(photos)
+    db = shelve.open(db_file)
+    if "removed" in db:
+        removed = db["removed"]
+    else:
+        removed = []
+    for uuid in duplicates:
+        photo = _find_photo_by_uuid(photos, uuid)
+        removed.append({"removed": datetime.now(), "photo": photo})
+    db["removed"] = removed
+    stripped = filter(lambda p: p.uuid not in duplicates, photos)
+    db["photos"] = stripped
+    db.sync()
+    db.close()
+    return stripped
+
+def _find_duplicates(photos):
+    """For each photo see if next photo matches current. If it does then add following photo to duplicates list."""
+    duplicates = [] # List of ids
+    size = len(photos)
+    for i, p in enumerate(photos):
+        if not p.duplicate and i + 1 < size:
+            c = i
+            while _is_duplicate(p, photos[c + 1]):
+                photos[c + 1].duplicate = True
+                duplicates.append(photos[c + 1].uuid)
+                c += 1
+    return duplicates
+
+def _is_duplicate(a, b):
+    """Compare photo b with a. Return True if b is duplicate of a. Otherwise False."""
+    if ((a.path == b.path) or (a.created == b.created and a.camera == b.camera)) and a.user == b.user:
+        return True
+    else:
+        return False
+
 
 # Template helpers
 
@@ -555,7 +592,7 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(relative_path=relative_path)
 
     # Load photos from database, thumbnails are on disk
-    photo_list = _load_photos()
+    photo_list = _remove_duplicates(_load_photos())
     photo_map = _group_photos(photo_list)
     users = _load_users(photo_list)
     cameras = _load_cameras(photo_list)
