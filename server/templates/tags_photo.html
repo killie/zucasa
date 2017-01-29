@@ -1,0 +1,12 @@
+<div class="tags-photo">
+  <div>
+    {% for tag in tags %}
+    <label><input type="checkbox" value="{{ tag }}" {% if tags[tag] %}checked{% endif %}>{{ tag }}</input></label>
+    {% endfor %}
+  </div>
+  <div>
+    <p>Add new (tag1, tag2)</p>
+    <input type="text" id="tagName"></input>
+    <input type="button" id="addTag" value="Add"></input>
+  </div>
+</div>

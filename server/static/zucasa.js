@@ -244,6 +244,26 @@ $("#view .date").click(function () {
     $.get("/_get_metainfo", {uuid: getPhotoId()}, showMetaInfo, "html");
 });
 
+$("#view .tags").click(function (e) {
+    function showTags(html) {
+	$("#view").append($(html));
+	$("#view #addTag").click(function (e) {
+	    addTag(getPhotoId(), $("#view #tagName").val());
+	});
+    }
+
+    $.get("/_get_tags", {uuid: getPhotoId()}, showTags, "html");
+});
+
+function addTag(uuid, tag) {
+    $.getJSON("/_add_tag", {
+	uuid: uuid,
+	tag: tag
+    }, function (data) {
+	console.debug(data);
+    });
+}
+
 $("#view .star").click(function (e) {
     var icon = e.currentTarget.firstElementChild;
     $.getJSON("/_toggle_star", {

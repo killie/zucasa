@@ -378,6 +378,7 @@ def _filter_to_args(filter):
 
 @app.route("/_get_metainfo")
 def get_metainfo():
+    """Loads metainfo for a specific photo and returns a HTML sidebar with metainfo in table."""
     uuid = request.args["uuid"]
     photo = _find_photo_by_uuid(photo_list, uuid)
     metainfo = photo.load_metainfo()
@@ -391,6 +392,32 @@ def _sort_metainfo(metainfo):
         array.append({"key": key, "value": metainfo[key], "class": "less" if key in less else "more" })
 
     return sorted(array, key=lambda d: d["key"])
+
+@app.route("/_get_tags")
+def get_tags():
+    """Load global tags and tags used in photo and return HTML sidebar with current tags and option to create tags."""
+    uuid = request.args["uuid"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    current_tags = {}
+    for tag in tags:
+        selected = False
+        if tag == "starred":
+            selected = photo.starred
+        else:
+            for photo_tag in photo.tags:
+                if tag == photo_tag:
+                    selected = True
+        current_tags[tag] = selected
+
+    return render_template("tags_photo.html", tags=current_tags)
+
+@app.route("/_add_tag")
+def add_tag():
+    """Create tag if not exists and add to image if a photo is specified."""
+    uuid = request.args["uuid"]
+    tag = request.args["tag"]
+    print tag
+    return jsonify({"success": True})
 
 @app.route("/_show_more")
 def show_more():
