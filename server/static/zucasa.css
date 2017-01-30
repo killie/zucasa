@@ -350,6 +350,14 @@ img.thumbnail:hover {
     line-height: 1.4em;
 }
 
+#view .tags-icon {
+    display: flex;
+}
+
+#view .tags-icon > div {
+    margin-left: 0.25em;
+}
+
 #view .options .spacer {
     flex: 1;
 }

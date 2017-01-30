@@ -647,6 +647,9 @@ def relative_path(path):
     length = len(getcwd() + "/server/")
     return path[length:]
 
+def list_tags(tags):
+    return ", ".join(tags)
+
 
 # Startup
 
@@ -659,6 +662,7 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(nice_date=nice_date)
     app.jinja_env.globals.update(nice_time=nice_time)
     app.jinja_env.globals.update(relative_path=relative_path)
+    app.jinja_env.globals.update(list_tags=list_tags)
 
     # Load photos from database, thumbnails are on disk
     photo_list = _remove_duplicates(_load_photos())

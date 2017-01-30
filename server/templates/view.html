@@ -37,6 +37,9 @@
 	</div>
 	<div class="tags-icon" title="Show tags">
 	  <i class="fa fa-tags"></i>
+	  {% if photo.tags %}
+	  <div>{{ list_tags(photo.tags) }}</div>
+	  {% endif %}
 	</div>
 	<div class="star" title="Add/remove star">
 	  <i class="fa {% if photo.starred %}fa-star{% else %}fa-star-o{% endif %}"></i>
