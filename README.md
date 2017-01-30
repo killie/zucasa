@@ -15,7 +15,8 @@ Runs on GNU/Linux using Python, Flask, ExifTool and ImageMagick.
 ## Usage
 
 1. Run `zucasa.sh` to start web server
-2. Go to Settings and enter your photo location(s)
-3. Import process is not optimal right now, so just watch stdout until 'Done', then refresh your browser
+2. See output from startup script to find where your gallery is hosted.
+3. Go to Settings and enter your photo location(s)
+4. Import process is not optimal right now, so just watch stdout until 'Done', then refresh your browser
 
-See output from startup script to find where your gallery is hosted.
+
