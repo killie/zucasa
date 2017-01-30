@@ -447,6 +447,20 @@ def add_tag():
 
     return jsonify({"success": True})
 
+@app.route("/_remove_tag")
+def remove_tag():
+    """Remove a tag from a specific photo."""
+    global photo_list
+    if not photo_list:
+        photo_list = _load_photos()
+
+    uuid = request.args["uuid"]
+    tag = request.args["tag"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    photo.tags = filter(lambda t: t != tag, photo.tags)
+    _save_photos(photo_list)
+    return jsonify({"success": True})
+
 @app.route("/_show_more")
 def show_more():
     """Takes first/last date and goes back/forward x number of photos to find new date.

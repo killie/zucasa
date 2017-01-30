@@ -223,7 +223,7 @@ img.thumbnail:hover {
 }
 
 #view .sidebar.metainfo {
-    width: 500px;
+    min-width: 450px;
     overflow: auto;
     font-size: smaller;
 }
@@ -373,10 +373,31 @@ img.thumbnail:hover {
     vertical-align: top;
 }
 
+#view .metainfo .close {
+    margin: 0.5em 0 0 0.5em;
+}
+
 /* Tags */
 
 #view .tags input[type=text] {
-    width: 180px;
+    width: 175px;
+}
+
+#view .tags .tag-list {
+    display: flex;
+    flex-direction: column;
+}
+
+#view .tags h3 {
+    margin-bottom: 0.3em;
+}
+
+#view #addTag {
+    margin-top: 0.25em;
+}
+
+#view .tags .close {
+    margin-top: 1.25em;
 }
 
 /* Settings page */

@@ -253,6 +253,11 @@ function showTagsSidebar() {
 	    addTag(getPhotoId(), $("#view #tagName").val());
 	    showTagsSidebar();
 	});
+	$("#view .tags input[type=checkbox]").click(function (e) {
+	    if (this.checked) addTag(getPhotoId(), this.value);
+	    else removeTag(getPhotoId(), this.value);
+	    showTagsSidebar();
+	});
 	$("#view .tags input.close").click(function () {
 	    $(".sidebar.tags").empty().hide();
 	});
@@ -263,6 +268,15 @@ function showTagsSidebar() {
 
 function addTag(uuid, tag) {
     $.getJSON("/_add_tag", {
+	uuid: uuid,
+	tag: tag
+    }, function (data) {
+	console.debug(data);
+    });
+}
+
+function removeTag(uuid, tag) {
+    $.getJSON("/_remove_tag", {
 	uuid: uuid,
 	tag: tag
     }, function (data) {

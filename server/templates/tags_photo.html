@@ -1,11 +1,11 @@
 <div>
-  <div>
+  <div class="tag-list">
     {% for tag in tags %}
     <label><input type="checkbox" value="{{ tag }}" {% if tags[tag] %}checked{% endif %}>{{ tag }}</input></label>
     {% endfor %}
   </div>
   <div>
-    <p>Add new</p>
+    <h3>Add new</h3>
     <input type="text" id="tagName" placeholder="tag1, tag2"></input>
     <input type="button" id="addTag" value="Add"></input>
   </div>
