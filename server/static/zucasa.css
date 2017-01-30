@@ -37,10 +37,13 @@ body {
 .sidebar {
     display: flex;
     flex-direction: column;
-    padding: 0.5em;
     width: 200px;
     background-color: var(--dark-color);
     color: var(--light-color);
+}
+
+.sidebar > div {
+    padding: 0.5em;
 }
 
 /* Dates */
@@ -117,12 +120,12 @@ body {
     font-weight: bold;
 }
 
-.users, .cameras, .tags {
+.filters .users, .filters .cameras, .filters .tags {
     display: flex;
     flex-wrap: wrap;
 }
 
-.users > div, .cameras > div, .tags > div {
+.filters .users > div, .filters .cameras > div, .filters .tags > div {
     margin-right: 0.2em;
     margin-bottom: 0.1em;
     padding: 0.1em;
@@ -130,13 +133,13 @@ body {
     overflow: hidden;
 }
 
-.users > div.selected, .cameras > div.selected, .tags > div.selected {
+.filters .users > div.selected, .filters .cameras > div.selected, .filters .tags > div.selected {
     background-color: var(--accent-color);
     color: white;
     border-radius: 5px;
 }
 
-.users > div:hover, .cameras > div:hover, .tags > div:hover {
+.filters .users > div:hover, .filters .cameras > div:hover, .filters .tags > div:hover {
     cursor: pointer;
 }
 
@@ -203,8 +206,26 @@ img.thumbnail:hover {
     margin: 0;
     background-color: var(--dark-color);
     display: flex;
-    flex-direction: column;
     height: 100vh;
+    overflow: hidden;
+}
+
+#view .main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+}
+
+#view .sidebar {
+    background-color: white;
+    color: var(--dark-color);
+}
+
+#view .sidebar.metainfo {
+    width: 500px;
+    overflow: auto;
+    font-size: smaller;
 }
 
 .click-to-select {
@@ -341,23 +362,21 @@ img.thumbnail:hover {
     cursor: pointer;
 }
 
-#view .metainfo {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    overflow: auto;
-    margin: 0;
-    padding: 1em;
-    background-color: var(--dark-color);
-    color: var(--light-color);
-    display: flex;
-    flex-direction: column;
-    border-right: medium solid var(--accent-color);
-}
+/* Meta info */
 
 #view .metainfo tr td:first-child {
     font-weight: bold;
     padding-right: 1em;
+}
+
+#view .metainfo td {
+    vertical-align: top;
+}
+
+/* Tags */
+
+#view .tags input[type=text] {
+    width: 180px;
 }
 
 /* Settings page */

@@ -108,9 +108,11 @@ def _filter_photos(args):
                 if not args["tags"]:
                     photos.append(photo)
                 else:
-                    if len(args["tags"]) == 1 and args["tags"][0] == "starred":
-                        if photo.starred:
-                            photos.append(photo)
+                    matches = set(args["tags"]) & set(photo.tags)
+                    if len(matches) > 0:
+                        photos.append(photo)
+                    elif "starred" in args["tags"] and photo.starred:
+                        photos.append(photo)
 
     return photos
 
@@ -414,9 +416,35 @@ def get_tags():
 @app.route("/_add_tag")
 def add_tag():
     """Create tag if not exists and add to image if a photo is specified."""
+    global photo_list, tags
+    if not photo_list:
+        photo_list = _load_photos()
+        tags = _load_tags(photo_list)
+
     uuid = request.args["uuid"]
     tag = request.args["tag"]
-    print tag
+    new_tags = tag.split(",")
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    modified = False
+    for t in new_tags:
+        found = False
+        for ex in photo.tags:
+            if ex.lower() == t.strip().lower():
+                found = True
+        if not found:
+            photo.tags.append(t.strip())
+            modified = True
+
+        found = False
+        for ex in tags:
+            if ex.lower() == t.strip().lower():
+                found = True
+        if not found:
+            tags.append(t.strip())
+
+    if modified:
+        _save_photos(photo_list)
+
     return jsonify({"success": True})
 
 @app.route("/_show_more")

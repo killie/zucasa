@@ -230,30 +230,36 @@ function saveDescription(e) {
 
 $("#view .date").click(function () {
     function showMetaInfo(html) {
-	$("#view").append($(html));
+	$("#view .metainfo").empty().append($(html)).show();
 	$(".metainfo tr.more").toggle();
 	$(".metainfo input.more").click(function () {
 	    $(".metainfo tr.more").toggle();
 	    this.value = this.value === "More" ? "Less" : "More";
 	});
 	$(".metainfo input.close").click(function () {
-	    $(".metainfo").remove();
+	    $(".sidebar.metainfo").empty().hide();
 	});
     }
 
     $.get("/_get_metainfo", {uuid: getPhotoId()}, showMetaInfo, "html");
 });
 
-$("#view .tags").click(function (e) {
+$("#view .tags-icon").click(showTagsSidebar);
+
+function showTagsSidebar() {
     function showTags(html) {
-	$("#view").append($(html));
+	$("#view .tags").empty().append($(html)).show();
 	$("#view #addTag").click(function (e) {
 	    addTag(getPhotoId(), $("#view #tagName").val());
+	    showTagsSidebar();
+	});
+	$("#view .tags input.close").click(function () {
+	    $(".sidebar.tags").empty().hide();
 	});
     }
 
     $.get("/_get_tags", {uuid: getPhotoId()}, showTags, "html");
-});
+}
 
 function addTag(uuid, tag) {
     $.getJSON("/_add_tag", {
