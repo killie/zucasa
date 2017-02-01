@@ -573,6 +573,18 @@ def recover_photo():
     db.close()
     return jsonify({"success": True})
 
+@app.route("/_get_all_tags")
+def get_all_tags():
+    all_tags = {}
+    for photo in photo_list:
+        for tag in photo.tags:
+            if not tag in all_tags:
+                all_tags[tag] = 1
+            else:
+                all_tags[tag] += 1
+
+    return render_template("tags_edit.html", all_tags=all_tags)
+
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""
     photos = []

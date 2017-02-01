@@ -387,6 +387,38 @@ function updateLocationRows() {
     });
 }
 
+// Clicking tags on settings page
+$("#settings nav .tags").click(function () {
+    function showAllTags(html) {
+	$("#settings .container").append($(html));
+	$("#settings ul.tag-list .count").click(showAllPhotosWithTag);
+	$("#settings ul.tag-list .rename").click(renameAllTagsByName);
+	$("#settings ul.tag-list .remove").click(removeAllTagsByName);
+    }
+
+    $("#settings nav li").removeClass("selected");
+    $("#settings nav li.tags").addClass("selected");
+    emptySettingsPage();
+    $.get("/_get_all_tags", {}, showAllTags, "html");
+});
+
+function showAllPhotosWithTag(e) {
+    var name = $(e.target).closest("li").attr("name");
+    var href = document.location.origin + "?tags=" + encodeURIComponent(name);
+    window.location.href = href;
+}
+
+function renameAllTagsByName(e) {
+    var oldName = $(e.target).closest("li").attr("name");
+    var newName = $(e.target).closest("li").find("input.name").val();
+    console.debug("rename all", oldName, newName);
+}
+
+function removeAllTagsByName(e) {
+    var name = $(e.target).closest("li").attr("name");
+    console.debug("remove all", name);
+}
+
 // Clicking back goes to previous page
 $("input.back").click(function (e) {
     if (window.history.length > 1) {

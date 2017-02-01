@@ -1,0 +1,13 @@
+<div>
+  <h1>All tags</h1>
+  <ul class="tag-list">
+    {% for tag in all_tags %}
+    <li name="{{ tag }}">
+      <div class="count" title="Show all">{{ all_tags[tag] }}</div>
+      <input type="text" class="name" value="{{ tag }}">
+      <input type="button" class="rename" value="Rename">
+      <input type="button" class="remove" value="Remove">
+    </li>
+    {% endfor %}
+  </ul>
+</div>

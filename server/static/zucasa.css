@@ -467,6 +467,47 @@ img.thumbnail:hover {
     padding-bottom: 0.5em;
 }
 
+#settings ul.tag-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#settings ul.tag-list li {
+    padding: 0.5em 0;
+    display: flex;
+}
+
+#settings ul.tag-list .name {
+    width: 10em;
+    padding-right: 0.5em;
+}
+
+#settings ul.tag-list .count {
+    text-align: center;
+    font-size: small;
+    border-radius: 6px;
+    background-color: var(--dark-color);
+    color: white;
+    font-weight: bold;
+    padding-top: 2px;
+    margin: 2px 1em 2px auto;
+    padding: 2px 5px;
+}
+
+#settings ul.tag-list .count:hover {
+    background-color: var(--accent-color);
+    cursor: pointer;
+}
+
+#settings ul.tag-list .rename {
+    margin-left: 0.5em;
+}
+
+#settings ul.tag-list .remove {
+    margin-left: 1em;
+}
+
 #settings input[type=number] {
     width: 5em;
 }
