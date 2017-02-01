@@ -388,7 +388,9 @@ function updateLocationRows() {
 }
 
 // Clicking tags on settings page
-$("#settings nav .tags").click(function () {
+$("#settings nav .tags").click(showTagEdit);
+
+function showTagEdit() {
     function showAllTags(html) {
 	$("#settings .container").append($(html));
 	$("#settings ul.tag-list .count").click(showAllPhotosWithTag);
@@ -400,7 +402,7 @@ $("#settings nav .tags").click(function () {
     $("#settings nav li.tags").addClass("selected");
     emptySettingsPage();
     $.get("/_get_all_tags", {}, showAllTags, "html");
-});
+}
 
 function showAllPhotosWithTag(e) {
     var name = $(e.target).closest("li").attr("name");
@@ -411,7 +413,14 @@ function showAllPhotosWithTag(e) {
 function renameAllTagsByName(e) {
     var oldName = $(e.target).closest("li").attr("name");
     var newName = $(e.target).closest("li").find("input.name").val();
-    console.debug("rename all", oldName, newName);
+    if (oldName.trim() === newName.trim()) return;
+    $.getJSON("/_rename_all_tags", {oldName: oldName, newName: newName}, function (result) {
+	if (result.success) {
+	    showTagEdit();
+	} else {
+	    console.warn(result);
+	}
+    });
 }
 
 function removeAllTagsByName(e) {

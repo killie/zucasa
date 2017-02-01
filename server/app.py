@@ -585,6 +585,17 @@ def get_all_tags():
 
     return render_template("tags_edit.html", all_tags=all_tags)
 
+@app.route("/_rename_all_tags")
+def rename_all_tags():
+    oldName = request.args["oldName"].strip()
+    newName = request.args["newName"].strip()
+    global photo_list
+    for photo in photo_list:
+        photo.tags = [tag.replace(oldName, newName) for tag in photo.tags]
+
+    _save_photos(photo_list)
+    return jsonify({"success": "Renamed from " + oldName + " to " + newName})
+
 def _load_photos():
     """Load database with existing photos (thumbnails are on disk)."""
     photos = []
