@@ -8,7 +8,7 @@ class Photo:
     """Holds reference to a photo via user, year, month, day and uuid. 
     Has methods to get metainfo and original image."""
 
-    FORMATS = ["jpg", "png", "gif"]
+    FORMATS = ["jpeg", "jpg", "png", "gif"]
 
     def __init__(self, user, path):
         self.user = user
@@ -176,3 +176,9 @@ class Photo:
             command.append(str(width) + "x" + str(height))
 
         return command
+
+    def rotate(self, degrees):
+        command = ["convert", "-rotate", degrees, self.preview, self.preview]
+        subprocess.check_output(command)
+        command = ["convert", "-rotate", degrees, self.thumbnail, self.thumbnail]
+        subprocess.check_output(command)

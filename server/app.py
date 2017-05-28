@@ -573,6 +573,14 @@ def recover_photo():
     db.close()
     return jsonify({"success": True})
 
+@app.route("/_rotate_photo")
+def rotate_photo():
+    uuid = request.args["uuid"]
+    degrees = request.args["degrees"]
+    photo = _find_photo_by_uuid(photo_list, uuid)
+    photo.rotate(degrees)
+    return jsonify({"success": True})
+
 @app.route("/_get_all_tags")
 def get_all_tags():
     all_tags = {}

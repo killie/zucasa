@@ -244,6 +244,24 @@ $("#view .date").click(function () {
     $.get("/_get_metainfo", {uuid: getPhotoId()}, showMetaInfo, "html");
 });
 
+$("#view .rotate-left").click(function () {
+    rotatePhoto("-90");
+});
+
+$("#view .rotate-right").click(function () {
+    rotatePhoto("90");
+});
+
+function rotatePhoto(degrees) {
+    $.getJSON("/_rotate_photo", {
+	uuid: getPhotoId(),
+	degrees: degrees
+    }, function (result) {
+	// Reload page
+	window.location.reload();
+    });
+}
+
 $("#view .tags-icon").click(showTagsSidebar);
 
 function showTagsSidebar() {
