@@ -52,10 +52,6 @@ $(".sidebar li a").click(function (e) {
 $("#main img.thumbnail, #view img.thumbnail").click(showThumbnail);
 
 function showThumbnail(event) {
-    // Remember hash on main location for 30 minutes, for use when pressing close from view page
-    if ($("body#main").length) {
-	document.cookie = "mainLocation=" + document.location.hash + "; max-age=60*30;";
-    }
     openThumbnail(event.target.src);
 }
 
@@ -195,11 +191,12 @@ function getIdFromThumbnail(thumbnail) {
 
 // Clicking close on view page goes back previous main location
 $("#view .close").click(function (e) {
-    // https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
-    var hash = document.cookie.replace(/(?:(?:^|.*;\s*)mainLocation\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    var url = window.location.origin + "/" + window.location.search;
-    if (hash) url += hash;
-    window.location.href = url;
+    var prevUrl = window.location.origin + "/" + window.location.search,
+	parts = window.location.href.split("/"),
+	n = parts.length,
+	hash = parts[n - 4] + parts[n - 3] + parts[n - 2] + "";
+
+    window.location.href = prevUrl + "#" + hash;
 });
 
 $("#view .edit-description, #view .description").click(function (e) {
