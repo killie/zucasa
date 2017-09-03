@@ -191,12 +191,8 @@ body {
 
 /* Thumbnails */
 
-img.thumbnail {
-    border: 4px transparent solid;
-}
-
 img.thumbnail:hover {
-    border: 4px var(--accent-color) solid;
+    opacity: 0.8;
     cursor: pointer;
 }
 
